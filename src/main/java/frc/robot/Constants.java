@@ -16,4 +16,20 @@ public final class Constants {
   public static class OperatorConstants {
     public static final int kDriverControllerPort = 0;
   }
+  public static class RobotConstants {
+    public static final double LENGTH = 24;
+    public static final double WIDTH = 24;
+    public static final double RADIUS = Math.sqrt((WIDTH*WIDTH) + (LENGTH*LENGTH));
+  }
+  public static class DriveConstants {
+    public static final double MAX_VOLTS = 4.95;
+    public static final int frontLeftID = 0;
+    public static final int frontLeftAngleID = 0;
+    public static final int frontRightID = 0;
+    public static final int frontRightAngleID = 0;
+    public static final int backLeftID = 0;
+    public static final int backLeftAngleID = 0;
+    public static final int backRightID = 0;
+    public static final int backRightAngleID = 0;
+  }
 }
