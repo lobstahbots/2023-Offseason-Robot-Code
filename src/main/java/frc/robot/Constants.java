@@ -19,6 +19,9 @@ import edu.wpi.first.math.util.Units;
 public final class Constants {
   public static class OperatorConstants {
     public static final int DRIVER_CONTROLLER_PORT = 0;
+    public static final int STRAFE_X_AXIS = 0;
+    public static final int STRAFE_Y_AXIS = 1;
+    public static final int ROTATION_AXIS = 2;
   }
   public static class RobotConstants {
     public static final double TRACK_WIDTH = Units.inchesToMeters(24);
@@ -37,6 +40,9 @@ public final class Constants {
       new Translation2d(RobotConstants.WHEELBASE / 2.0, -RobotConstants.TRACK_WIDTH / 2.0),
       new Translation2d(-RobotConstants.WHEELBASE / 2.0, RobotConstants.TRACK_WIDTH / 2.0),
       new Translation2d(-RobotConstants.WHEELBASE / 2.0, -RobotConstants.TRACK_WIDTH / 2.0));
+
+    public static final boolean FIELD_CENTRIC = true;
+    public static final boolean CLOSED_LOOP = false;
 
     public static class FrontLeftModuleConstants {
       public static final int moduleID = 0;

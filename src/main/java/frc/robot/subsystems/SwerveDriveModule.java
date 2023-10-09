@@ -123,6 +123,21 @@ public class SwerveDriveModule extends SubsystemBase {
     return new SwerveModulePosition(drivingEncoder.getPosition(), new Rotation2d(angleEncoder.getPosition() - angularOffset.getRadians()));
   }
 
+  /**
+   * Sets the braking mode of the motors.
+   * 
+   * @param the {@link IdleMode} to set motors to.
+   */
+  public void setBrakingMode(IdleMode mode) {
+    angleMotor.setIdleMode(mode);
+    driveMotor.setIdleMode(mode);
+  }
+
+  public void stopMotors() {
+    angleMotor.stopMotor();
+    driveMotor.stopMotor();
+  }
+
   
   /**
    * Sets the desired state for the module.

@@ -4,6 +4,7 @@
 
 package frc.robot.subsystems;
 import com.kauailabs.navx.frc.AHRS;
+import com.revrobotics.CANSparkMax.IdleMode;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -23,7 +24,7 @@ import frc.robot.Constants.DriveConstants.FrontLeftModuleConstants;
 import frc.robot.Constants.DriveConstants.FrontRightModuleConstants;
 
 public class SwerveDriveBase extends SubsystemBase {
-  /** Creates a new ExampleSubsystem. */
+  /** Creates a new SwerveDriveBase. */
   private final SwerveDriveModule frontRight;
   private final SwerveDriveModule frontLeft;
   private final SwerveDriveModule backRight;
@@ -92,6 +93,18 @@ public class SwerveDriveBase extends SubsystemBase {
     for (SwerveDriveModule module : modules) {
       module.setDesiredState(swerveModuleStates[module.getModuleID()], isOpenLoop);
     }
+}
+
+public void setBrakingMode(IdleMode mode) {
+  for(SwerveDriveModule module: modules) {
+    module.setBrakingMode(mode);
+  }
+}
+
+public void stopMotors() {
+  for(SwerveDriveModule module: modules) {
+    module.stopMotors();
+  }
 }
 
   @Override

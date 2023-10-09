@@ -4,7 +4,6 @@
 
 package frc.robot.commands;
 
-import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.math.geometry.Translation2d;
@@ -17,36 +16,28 @@ public class SwerveDriveCommand extends CommandBase {
   private final DoubleSupplier strafeXSupplier;
   private final DoubleSupplier strafeYSupplier;
   private final DoubleSupplier rotationSupplier;
-  private final BooleanSupplier fieldCentricSupplier;
-  private final BooleanSupplier closedLoopSupplier;
+  private final boolean fieldCentric;
+  private final boolean closedLoop;
 
-  public SwerveDriveCommand(SwerveDriveBase swerveDriveBase, double strafeX, double strafeY, double rotation, boolean fieldCentric, boolean closedLoop) {
-    this(swerveDriveBase, () -> strafeX, () -> strafeY, () -> rotation, () -> fieldCentric, () -> closedLoop);
-  }
-
-  public SwerveDriveCommand(SwerveDriveBase swerveDriveBase, DoubleSupplier strafeXSupplier, DoubleSupplier strafeYSupplier, DoubleSupplier rotationSupplier, BooleanSupplier fieldCentricSupplier, BooleanSupplier closedLoopSupplier) {
+  public SwerveDriveCommand(SwerveDriveBase swerveDriveBase, DoubleSupplier strafeXSupplier, DoubleSupplier strafeYSupplier, DoubleSupplier rotationSupplier, boolean fieldCentric, boolean closedLoop) {
     this.swerveDriveBase = swerveDriveBase;
     this.strafeXSupplier = strafeXSupplier;
     this.strafeYSupplier = strafeYSupplier;
     this.rotationSupplier = rotationSupplier;
-    this.fieldCentricSupplier = fieldCentricSupplier;
-    this.closedLoopSupplier = closedLoopSupplier;
+    this.fieldCentric = fieldCentric;
+    this.closedLoop = closedLoop;
     addRequirements(swerveDriveBase);
   }
 
-  // Called when the command is initially scheduled.
-  @Override
-  public void initialize() {}
+  public SwerveDriveCommand(SwerveDriveBase swerveDriveBase, double strafeX, double strafeY, double rotation, boolean fieldCentric, boolean closedLoop) {
+    this(swerveDriveBase, () -> strafeX, () -> strafeY, () -> rotation, fieldCentric, closedLoop);
+  }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    swerveDriveBase.drive(new Translation2d(strafeXSupplier.getAsDouble(), strafeYSupplier.getAsDouble()), rotationSupplier.getAsDouble(), fieldCentricSupplier.getAsBoolean(), closedLoopSupplier.getAsBoolean());
+    swerveDriveBase.drive(new Translation2d(strafeXSupplier.getAsDouble(), strafeYSupplier.getAsDouble()), rotationSupplier.getAsDouble(), fieldCentric, closedLoop);
   }
-
-  // Called once the command ends or is interrupted.
-  @Override
-  public void end(boolean interrupted) {}
 
   // Returns true when the command should end.
   @Override

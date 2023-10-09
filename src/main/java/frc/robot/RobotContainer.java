@@ -4,8 +4,14 @@
 
 package frc.robot;
 
+import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.OperatorConstants;
+import frc.robot.commands.SwerveDriveCommand;
+import frc.robot.commands.SwerveDriveStopCommand;
 import frc.robot.subsystems.SwerveDriveBase;
+
+import com.revrobotics.CANSparkMax.IdleMode;
+
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
@@ -26,12 +32,16 @@ public class RobotContainer {
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
-    // Configure the trigger bindings
-    configureBindings();
+    setDefaultCommands();
   }
 
-  private void configureBindings() {
-   
+  private void setDefaultCommands() {
+    swerveDriveBase.setDefaultCommand(
+      new SwerveDriveCommand(swerveDriveBase,
+          () -> -driverJoystick.getRawAxis(OperatorConstants.STRAFE_X_AXIS),
+          () -> -driverJoystick.getRawAxis(OperatorConstants.STRAFE_Y_AXIS),
+          () -> -driverJoystick.getRawAxis(OperatorConstants.ROTATION_AXIS),
+          DriveConstants.FIELD_CENTRIC, DriveConstants.CLOSED_LOOP));
   }
 
   /**
@@ -42,4 +52,10 @@ public class RobotContainer {
   public Command getAutonomousCommand() {
     return new WaitCommand(0);
   }
+
+  public void setAutonDefaultCommands() {
+    swerveDriveBase.setBrakingMode(IdleMode.kBrake);
+    swerveDriveBase.setDefaultCommand(new SwerveDriveStopCommand(swerveDriveBase));
+  }
+
 }
