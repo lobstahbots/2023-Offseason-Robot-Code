@@ -3,44 +3,100 @@
 // the WPILib BSD license file in the root directory of this project.
 
 package frc.robot.subsystems;
+import com.kauailabs.navx.frc.AHRS;
+
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
+import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
+import edu.wpi.first.math.kinematics.SwerveModulePosition;
+import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants.RobotConstants;
+import frc.robot.Constants.DriveConstants;
+import frc.robot.Constants.SwerveConstants;
+import frc.robot.Constants.DriveConstants.BackLeftModuleConstants;
+import frc.robot.Constants.DriveConstants.BackRightModuleConstants;
+import frc.robot.Constants.DriveConstants.FrontLeftModuleConstants;
+import frc.robot.Constants.DriveConstants.FrontRightModuleConstants;
 
 public class SwerveDriveBase extends SubsystemBase {
   /** Creates a new ExampleSubsystem. */
-  private final SwerveDriveWheel frontRight;
-  private final SwerveDriveWheel frontLeft;
-  private final SwerveDriveWheel backRight;
-  private final SwerveDriveWheel backLeft;
+  private final SwerveDriveModule frontRight;
+  private final SwerveDriveModule frontLeft;
+  private final SwerveDriveModule backRight;
+  private final SwerveDriveModule backLeft;
+  private final SwerveDriveModule[] modules;
 
-  public SwerveDriveBase(int frontRightID, int frontRightAngleID, int frontLeftID, int frontLeftAngleID, int backRightID, int backRightAngleID, int backLeftID, int backLeftAngleID) {
-    this.frontLeft = new SwerveDriveWheel(frontLeftID, frontLeftAngleID);
-    this.frontRight = new SwerveDriveWheel(frontRightID, frontRightAngleID);
-    this.backLeft = new SwerveDriveWheel(backLeftID, backLeftAngleID);
-    this.backRight = new SwerveDriveWheel(backRightID, backRightAngleID);
+  private SwerveDriveOdometry swerveOdometry;
+  private final AHRS gyro = new AHRS();
+  private Field2d field;
+
+  public SwerveDriveBase() {
+    this.frontLeft = new SwerveDriveModule(FrontLeftModuleConstants.moduleID, FrontLeftModuleConstants.angleID, FrontLeftModuleConstants.driveID, FrontLeftModuleConstants.angleOffset);
+    this.frontRight = new SwerveDriveModule(FrontRightModuleConstants.moduleID, FrontRightModuleConstants.angleID, FrontRightModuleConstants.driveID, FrontRightModuleConstants.angleOffset);
+    this.backLeft = new SwerveDriveModule(BackLeftModuleConstants.moduleID, BackLeftModuleConstants.angleID, BackLeftModuleConstants.driveID, BackLeftModuleConstants.angleOffset);
+    this.backRight = new SwerveDriveModule(BackRightModuleConstants.moduleID, BackRightModuleConstants.angleID, BackRightModuleConstants.driveID, BackRightModuleConstants.angleOffset);
+
+    modules = new SwerveDriveModule[]{frontLeft, frontRight, backLeft, backRight};
+
+    zeroGyro();
+    swerveOdometry = new SwerveDriveOdometry(DriveConstants.KINEMATICS, getYaw(), getPositions(), new Pose2d());
+  }
+  
+  public Pose2d getPose() {
+    return swerveOdometry.getPoseMeters();
   }
 
-  public void drive (double strafeX, double strafeY, double rotationX) {
-    strafeY *= -1;
+  public void resetOdometry(Pose2d pose) {
+    swerveOdometry.resetPosition(getYaw(), getPositions(), pose);
+  }
 
-    double a = strafeX - rotationX * (RobotConstants.LENGTH / RobotConstants.RADIUS);
-    double b = strafeX + rotationX * (RobotConstants.LENGTH / RobotConstants.RADIUS);
-    double c = strafeX - rotationX * (RobotConstants.WIDTH / RobotConstants.RADIUS);
-    double d = strafeX + rotationX * (RobotConstants.WIDTH/ RobotConstants.RADIUS);
+  public SwerveModuleState[] getStates() {
+    SwerveModuleState[] states = new SwerveModuleState[4];
+    for (SwerveDriveModule module : modules) {
+      states[module.getModuleID()] = module.getState();
+    }
+    return states;
+  }
 
-    double backRightSpeed = Math.sqrt ((a * a) + (d * d));
-    double backLeftSpeed = Math.sqrt ((a * a) + (c * c));
-    double frontRightSpeed = Math.sqrt ((b * b) + (d * d));
-    double frontLeftSpeed = Math.sqrt ((b * b) + (c * c));
+  public SwerveModulePosition[] getPositions() {
+    SwerveModulePosition[] positions = new SwerveModulePosition[4];
+    for (SwerveDriveModule module : modules) {
+      positions[module.getModuleID()] = module.getPosition();
+    }
+    return positions;
+  }
 
-    double backRightAngle = Math.atan2 (a, d) / Math.PI;
-    double backLeftAngle = Math.atan2 (a, c) / Math.PI;
-    double frontRightAngle = Math.atan2 (b, d) / Math.PI;
-    double frontLeftAngle = Math.atan2 (b, c) / Math.PI;
+  public void zeroGyro() {
+    gyro.reset();
+  }
 
-    frontLeft.drive(frontLeftSpeed, frontLeftAngle);
-    frontRight.drive(frontRightSpeed, frontRightAngle);
-    backLeft.drive(backLeftSpeed, backLeftAngle);
-    backRight.drive(backRightSpeed, backRightAngle);
+  public Rotation2d getYaw() {
+    return (SwerveConstants.invertGyro)
+        ? Rotation2d.fromDegrees(360 - gyro.getYaw())
+        : Rotation2d.fromDegrees(gyro.getYaw());
+  }
+
+  public void drive(Translation2d translation, double rotation, boolean fieldRelative, boolean isOpenLoop) {
+    SwerveModuleState[] swerveModuleStates =
+        DriveConstants.KINEMATICS.toSwerveModuleStates(
+            fieldRelative
+                ? ChassisSpeeds.fromFieldRelativeSpeeds(
+                    translation.getX(), translation.getY(), rotation, getYaw())
+                : new ChassisSpeeds(translation.getX(), translation.getY(), rotation));
+    SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, DriveConstants.MAX_DRIVE_SPEED);
+
+    for (SwerveDriveModule module : modules) {
+      module.setDesiredState(swerveModuleStates[module.getModuleID()], isOpenLoop);
+    }
+}
+
+  @Override
+  public void periodic() {
+    swerveOdometry.update(getYaw(), getPositions());
+    field.setRobotPose(getPose());
   }
 }
