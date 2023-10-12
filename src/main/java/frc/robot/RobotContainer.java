@@ -7,9 +7,11 @@ package frc.robot;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.SwerveDriveCommand;
-import frc.robot.commands.SwerveDriveStopCommand;
 import frc.robot.subsystems.SwerveDriveBase;
 
+import com.pathplanner.lib.PathConstraints;
+import com.pathplanner.lib.PathPlanner;
+import com.pathplanner.lib.PathPlannerTrajectory;
 import com.revrobotics.CANSparkMax.IdleMode;
 
 import edu.wpi.first.wpilibj.Joystick;
@@ -32,16 +34,16 @@ public class RobotContainer {
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
-    setDefaultCommands();
+    setTeleopDefaultCommands();
   }
 
-  private void setDefaultCommands() {
+  private void setTeleopDefaultCommands() {
     swerveDriveBase.setDefaultCommand(
       new SwerveDriveCommand(swerveDriveBase,
           () -> -driverJoystick.getRawAxis(OperatorConstants.STRAFE_X_AXIS),
           () -> -driverJoystick.getRawAxis(OperatorConstants.STRAFE_Y_AXIS),
           () -> -driverJoystick.getRawAxis(OperatorConstants.ROTATION_AXIS),
-          DriveConstants.FIELD_CENTRIC, DriveConstants.CLOSED_LOOP));
+          DriveConstants.FIELD_CENTRIC, DriveConstants.IS_OPEN_LOOP));
   }
 
   /**
@@ -54,8 +56,9 @@ public class RobotContainer {
   }
 
   public void setAutonDefaultCommands() {
+    PathPlannerTrajectory trajectory = PathPlanner.loadPath("New Path", new PathConstraints(DriveConstants.MAX_DRIVE_SPEED, DriveConstants.MAX_ACCELERATION));
     swerveDriveBase.setBrakingMode(IdleMode.kBrake);
-    swerveDriveBase.setDefaultCommand(new SwerveDriveStopCommand(swerveDriveBase));
+    swerveDriveBase.setDefaultCommand(TrajectoryCommands.followTrajectoryCommand(swerveDriveBase, trajectory, true));
   }
 
 }

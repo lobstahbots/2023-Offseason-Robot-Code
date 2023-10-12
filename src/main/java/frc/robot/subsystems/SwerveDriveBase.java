@@ -95,6 +95,15 @@ public class SwerveDriveBase extends SubsystemBase {
     }
 }
 
+public void setModuleStates(SwerveModuleState[] desiredStates) {
+  SwerveDriveKinematics.desaturateWheelSpeeds(
+      desiredStates, DriveConstants.MAX_DRIVE_SPEED);
+  frontLeft.setDesiredState(desiredStates[0], DriveConstants.IS_OPEN_LOOP);
+  frontRight.setDesiredState(desiredStates[1], DriveConstants.IS_OPEN_LOOP);
+  backLeft.setDesiredState(desiredStates[2], DriveConstants.IS_OPEN_LOOP);
+  backRight.setDesiredState(desiredStates[3], DriveConstants.IS_OPEN_LOOP);
+}
+
 public void setBrakingMode(IdleMode mode) {
   for(SwerveDriveModule module: modules) {
     module.setBrakingMode(mode);

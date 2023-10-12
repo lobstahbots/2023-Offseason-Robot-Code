@@ -32,7 +32,8 @@ public final class Constants {
   }
   public static class DriveConstants {
     public static final double MAX_VOLTS = 4.95;
-    public static final double MAX_DRIVE_SPEED = 0;
+    public static final double MAX_ACCELERATION = 2;
+    public static final double MAX_DRIVE_SPEED = 10;
     public static final int DRIVE_MOTOR_CURRENT_LIMIT = 80;
     public static final int ANGLE_MOTOR_CURRENT_LIMIT = 20;
     public static final SwerveDriveKinematics KINEMATICS = new SwerveDriveKinematics(
@@ -42,7 +43,7 @@ public final class Constants {
       new Translation2d(-RobotConstants.WHEELBASE / 2.0, -RobotConstants.TRACK_WIDTH / 2.0));
 
     public static final boolean FIELD_CENTRIC = true;
-    public static final boolean CLOSED_LOOP = false;
+    public static final boolean IS_OPEN_LOOP = false;
 
     public static class FrontLeftModuleConstants {
       public static final int moduleID = 0;
