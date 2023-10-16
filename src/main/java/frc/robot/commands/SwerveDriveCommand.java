@@ -17,26 +17,24 @@ public class SwerveDriveCommand extends CommandBase {
   private final DoubleSupplier strafeYSupplier;
   private final DoubleSupplier rotationSupplier;
   private final boolean fieldCentric;
-  private final boolean closedLoop;
 
-  public SwerveDriveCommand(DriveBase driveBase, DoubleSupplier strafeXSupplier, DoubleSupplier strafeYSupplier, DoubleSupplier rotationSupplier, boolean fieldCentric, boolean closedLoop) {
+  public SwerveDriveCommand(DriveBase driveBase, DoubleSupplier strafeXSupplier, DoubleSupplier strafeYSupplier, DoubleSupplier rotationSupplier, boolean fieldCentric) {
     this.driveBase = driveBase;
     this.strafeXSupplier = strafeXSupplier;
     this.strafeYSupplier = strafeYSupplier;
     this.rotationSupplier = rotationSupplier;
     this.fieldCentric = fieldCentric;
-    this.closedLoop = closedLoop;
     addRequirements(driveBase);
   }
 
-  public SwerveDriveCommand(DriveBase driveBase, double strafeX, double strafeY, double rotation, boolean fieldCentric, boolean closedLoop) {
-    this(driveBase, () -> strafeX, () -> strafeY, () -> rotation, fieldCentric, closedLoop);
+  public SwerveDriveCommand(DriveBase driveBase, double strafeX, double strafeY, double rotation, boolean fieldCentric) {
+    this(driveBase, () -> strafeX, () -> strafeY, () -> rotation, fieldCentric);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    driveBase.drive(new Translation2d(strafeXSupplier.getAsDouble(), strafeYSupplier.getAsDouble()), rotationSupplier.getAsDouble(), fieldCentric, closedLoop);
+    driveBase.drive(new Translation2d(strafeXSupplier.getAsDouble(), strafeYSupplier.getAsDouble()), rotationSupplier.getAsDouble(), fieldCentric);
   }
 
   // Returns true when the command should end.

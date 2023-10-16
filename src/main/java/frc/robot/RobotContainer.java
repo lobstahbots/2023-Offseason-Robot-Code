@@ -6,9 +6,16 @@ package frc.robot;
 
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.OperatorConstants;
+import frc.robot.Constants.DriveConstants.BackLeftModuleConstants;
+import frc.robot.Constants.DriveConstants.BackRightModuleConstants;
+import frc.robot.Constants.DriveConstants.FrontLeftModuleConstants;
+import frc.robot.Constants.DriveConstants.FrontRightModuleConstants;
 import frc.robot.commands.SwerveDriveCommand;
 import frc.robot.subsystems.DriveBase;
+import frc.robot.subsystems.GyroIO;
 import frc.robot.subsystems.NavXGyro;
+import frc.robot.subsystems.SwerveModuleReal;
+import frc.robot.subsystems.SwerveModuleSim;
 
 import com.pathplanner.lib.PathConstraints;
 import com.pathplanner.lib.PathPlanner;
@@ -35,7 +42,22 @@ public class RobotContainer {
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
-    driveBase = new DriveBase(new NavXGyro());
+    if(Robot.isReal()) {
+      SwerveModuleReal frontLeft = new SwerveModuleReal(FrontLeftModuleConstants.moduleID, FrontLeftModuleConstants.angleID, FrontLeftModuleConstants.driveID, FrontLeftModuleConstants.angleOffset);
+      SwerveModuleReal frontRight = new SwerveModuleReal(FrontRightModuleConstants.moduleID, FrontRightModuleConstants.angleID, FrontRightModuleConstants.driveID, FrontRightModuleConstants.angleOffset);
+      SwerveModuleReal backLeft = new SwerveModuleReal(BackLeftModuleConstants.moduleID, BackLeftModuleConstants.angleID, BackLeftModuleConstants.driveID, BackLeftModuleConstants.angleOffset);
+      SwerveModuleReal backRight = new SwerveModuleReal(BackRightModuleConstants.moduleID, BackRightModuleConstants.angleID, BackRightModuleConstants.driveID, BackRightModuleConstants.angleOffset);
+  
+      driveBase = new DriveBase(new NavXGyro(), frontLeft, frontRight, backRight, backLeft, false);
+    } else {
+      SwerveModuleSim frontLeft = new SwerveModuleSim();
+      SwerveModuleSim frontRight = new SwerveModuleSim();
+      SwerveModuleSim backLeft = new SwerveModuleSim();
+      SwerveModuleSim backRight = new SwerveModuleSim();
+
+      driveBase = new DriveBase(new GyroIO(){}, frontLeft, frontRight, backRight, backLeft, false);
+    }
+   
     setTeleopDefaultCommands();
   }
 
@@ -45,7 +67,7 @@ public class RobotContainer {
           () -> -driverJoystick.getRawAxis(OperatorConstants.STRAFE_X_AXIS),
           () -> -driverJoystick.getRawAxis(OperatorConstants.STRAFE_Y_AXIS),
           () -> -driverJoystick.getRawAxis(OperatorConstants.ROTATION_AXIS),
-          DriveConstants.FIELD_CENTRIC, DriveConstants.IS_OPEN_LOOP));
+          DriveConstants.FIELD_CENTRIC));
   }
 
   /**
@@ -59,7 +81,7 @@ public class RobotContainer {
 
   public void setAutonDefaultCommands() {
     PathPlannerTrajectory trajectory = PathPlanner.loadPath("New Path", new PathConstraints(DriveConstants.MAX_DRIVE_SPEED, DriveConstants.MAX_ACCELERATION));
-    driveBase.setDriveBrakingMode(IdleMode.kBrake);
+    driveBase.setBrakingMode(IdleMode.kBrake);
     driveBase.setDefaultCommand(TrajectoryCommands.followTrajectoryCommand(driveBase, trajectory, true));
   }
 

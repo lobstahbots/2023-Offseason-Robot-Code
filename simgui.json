@@ -4,6 +4,19 @@
       "/FMSInfo": "FMSInfo"
     }
   },
+  "NetworkTables": {
+    "transitory": {
+      "Shuffleboard": {
+        ".metadata": {
+          "open": true
+        },
+        ".recording": {
+          "open": true
+        },
+        "open": true
+      }
+    }
+  },
   "NetworkTables Info": {
     "Connections": {
       "open": true
@@ -16,7 +29,6 @@
         "open": true
       },
       "open": true
-    },
-    "visible": true
+    }
   }
 }

@@ -25,23 +25,16 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.RobotConstants;
 import frc.robot.Constants.SimConstants;
-import frc.robot.Constants.DriveConstants.BackLeftModuleConstants;
-import frc.robot.Constants.DriveConstants.BackRightModuleConstants;
-import frc.robot.Constants.DriveConstants.FrontLeftModuleConstants;
-import frc.robot.Constants.DriveConstants.FrontRightModuleConstants;
 
 public class DriveBase extends SubsystemBase {
   /** Creates a new SwerveDriveBase. */
-  private final SwerveModule frontRight;
-  private final SwerveModule frontLeft;
-  private final SwerveModule backRight;
-  private final SwerveModule backLeft;
   private final SwerveModule[] modules; 
 
   private SwerveDrivePoseEstimator swerveOdometry;
   private final NavXGyro gyro = new NavXGyro();
   private final GyroIO gyroIO;
   private final GyroIOInputsAutoLogged gyroInputs = new GyroIOInputsAutoLogged();
+  private boolean isOpenLoop;
 
   private ChassisSpeeds setpoint = new ChassisSpeeds();
 
@@ -55,13 +48,9 @@ public class DriveBase extends SubsystemBase {
 
   private Field2d field;
 
-  public DriveBase(GyroIO gyroIO) {
-    this.frontLeft = new SwerveModule(FrontLeftModuleConstants.moduleID, FrontLeftModuleConstants.angleID, FrontLeftModuleConstants.driveID, FrontLeftModuleConstants.angleOffset);
-    this.frontRight = new SwerveModule(FrontRightModuleConstants.moduleID, FrontRightModuleConstants.angleID, FrontRightModuleConstants.driveID, FrontRightModuleConstants.angleOffset);
-    this.backLeft = new SwerveModule(BackLeftModuleConstants.moduleID, BackLeftModuleConstants.angleID, BackLeftModuleConstants.driveID, BackLeftModuleConstants.angleOffset);
-    this.backRight = new SwerveModule(BackRightModuleConstants.moduleID, BackRightModuleConstants.angleID, BackRightModuleConstants.driveID, BackRightModuleConstants.angleOffset);
+  public DriveBase(GyroIO gyroIO, SwerveModuleIO frontLeft, SwerveModuleIO frontRight, SwerveModuleIO backRight, SwerveModuleIO backLeft, boolean isOpenLoop) {
 
-    modules = new SwerveModule[]{frontLeft, frontRight, backLeft, backRight};
+    this.modules = new SwerveModule[]{new SwerveModule(frontLeft, 0), new SwerveModule(frontRight, 1), new SwerveModule(backRight, 2), new SwerveModule(backLeft, 3)};
     
     this.gyroIO = gyroIO;
 
@@ -69,7 +58,9 @@ public class DriveBase extends SubsystemBase {
     swerveOdometry = new SwerveDrivePoseEstimator(DriveConstants.KINEMATICS, gyro.getYaw(), getPositions(), new Pose2d());
 
     field = new Field2d();
-    SmartDashboard.putData(field);
+    SmartDashboard.putData("Field", field);
+
+    this.isOpenLoop = isOpenLoop;
   }
   
   public Pose2d getPose() {
@@ -96,7 +87,7 @@ public class DriveBase extends SubsystemBase {
     return positions;
   }
 
-  public void drive(Translation2d translation, double rotation, boolean fieldRelative, boolean isOpenLoop) {
+  public void drive(Translation2d translation, double rotation, boolean fieldRelative) {
     SwerveModuleState[] swerveModuleStates =
         DriveConstants.KINEMATICS.toSwerveModuleStates(
             fieldRelative
@@ -110,31 +101,35 @@ public class DriveBase extends SubsystemBase {
     }
 }
 
-public void setModuleStates(SwerveModuleState[] desiredStates) {
+public SwerveModuleState[] setModuleStates(SwerveModuleState[] desiredStates) {
+  SwerveModuleState[] optimizedStates = new SwerveModuleState[4];
   SwerveDriveKinematics.desaturateWheelSpeeds(
       desiredStates, DriveConstants.MAX_DRIVE_SPEED);
-  frontLeft.setDesiredState(desiredStates[0], DriveConstants.IS_OPEN_LOOP);
-  frontRight.setDesiredState(desiredStates[1], DriveConstants.IS_OPEN_LOOP);
-  backLeft.setDesiredState(desiredStates[2], DriveConstants.IS_OPEN_LOOP);
-  backRight.setDesiredState(desiredStates[3], DriveConstants.IS_OPEN_LOOP);
-}
-
-public void setDriveBrakingMode(IdleMode mode) {
   for(SwerveModule module: modules) {
-    module.setDriveBrakingMode(mode);
+    optimizedStates[module.getModuleID()] = module.setDesiredState(desiredStates[module.getModuleID()], isOpenLoop);
   }
+  return optimizedStates;
 }
 
-public void setTurnBrakingMode(IdleMode mode) {
+public void setBrakingMode(IdleMode mode) {
   for(SwerveModule module: modules) {
-    module.setTurnBrakingMode(mode);
+    module.setBrakingMode(mode);
   }
 }
 
 public void stopMotors() {
   for(SwerveModule module: modules) {
-    module.stopMotors();
+    module.stop();
   }
+}
+
+public boolean isOpenLoop() {
+  return isOpenLoop;
+}
+
+public void setIsOpenLoop(boolean newValue) {
+  isOpenLoop = newValue;
+  
 }
 
   @Override
@@ -151,7 +146,7 @@ public void stopMotors() {
     if (DriverStation.isDisabled()) {
       // Stop moving while disabled
       for (var module : modules) {
-        module.stopMotors();
+        module.stop();
       }
 
       // Clear setpoint logs
@@ -185,10 +180,7 @@ public void stopMotors() {
 
       states = newStates;
 
-    Logger.getInstance().recordOutput("SwerveStates/Desired", newStates);
-
-    setModuleStates(newStates);
-
+    Logger.getInstance().recordOutput("SwerveStates/Desired", setModuleStates(newStates));
     Logger.getInstance().recordOutput("SwerveStates/Measured", getStates());
     Logger.getInstance().recordOutput("Odometry/Robot", getPose());
     

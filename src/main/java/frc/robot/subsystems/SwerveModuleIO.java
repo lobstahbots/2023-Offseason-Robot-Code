@@ -6,6 +6,11 @@ package frc.robot.subsystems;
 
 import org.littletonrobotics.junction.AutoLog;
 
+import com.revrobotics.CANSparkMax.IdleMode;
+
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.kinematics.SwerveModuleState;
+
 public interface SwerveModuleIO {
   @AutoLog
   public static class ModuleIOInputs {
@@ -19,6 +24,7 @@ public interface SwerveModuleIO {
     public double turnVelocityRadPerSec = 0.0;
     public double turnAppliedVolts = 0.0;
     public double[] turnCurrentAmps = new double[] {};
+    public Rotation2d angularOffset = new Rotation2d();
   }
 
   public default void updateInputs(ModuleIOInputs inputs) {}
@@ -29,10 +35,14 @@ public interface SwerveModuleIO {
   /** Run the turn motor at the specified voltage. */
   public default void setTurnVoltage(double volts) {}
 
+  public default void setAngle(SwerveModuleState optimizedDesiredState){}
+
+  public default void setDriveSpeed(SwerveModuleState optimizedDesiredState, boolean isOpenLoop){}
+
   /** Enable or disable brake mode on the drive motor. */
-  public default void setDriveBrakeMode(boolean enable) {}
+  public default void setDriveBrakeMode(IdleMode mode) {}
 
   /** Enable or disable brake mode on the turn motor. */
-  public default void setTurnBrakeMode(boolean enable) {}
+  public default void setTurnBrakeMode(IdleMode mode) {}
 
 }
