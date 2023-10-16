@@ -4,6 +4,8 @@
 
 package frc.robot.subsystems;
 
+import org.littletonrobotics.junction.Logger;
+
 import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
@@ -17,11 +19,11 @@ import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.math.util.Units;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.SwerveConstants;
 
-public class SwerveDriveModule extends SubsystemBase {
+public class SwerveModule extends SwerveModuleSim {
   private final CANSparkMax angleMotor;
   private final CANSparkMax driveMotor;
   private final RelativeEncoder drivingEncoder;
@@ -35,6 +37,7 @@ public class SwerveDriveModule extends SubsystemBase {
   private Rotation2d lastAngle;
   private SwerveModuleState desiredState = new SwerveModuleState(0.0, new Rotation2d());
   private final int moduleID;
+  private final ModuleIOInputsAutoLogged inputs = new ModuleIOInputsAutoLogged();
 
   /** Creates a new SwerveDriveWheel. 
    * 
@@ -43,7 +46,7 @@ public class SwerveDriveModule extends SubsystemBase {
    * @param driveMotorID The CAN ID of the motor controlling drive speed.
    * @param angularOffsetDegrees The offset angle in degrees.
   */
-  public SwerveDriveModule (int moduleID, int angleMotorID, int driveMotorID, double angularOffsetDegrees) {
+  public SwerveModule (int moduleID, int angleMotorID, int driveMotorID, double angularOffsetDegrees) {
     this.moduleID = moduleID;
 
     this.angleMotor = new CANSparkMax(angleMotorID, MotorType.kBrushless);
@@ -124,13 +127,22 @@ public class SwerveDriveModule extends SubsystemBase {
   }
 
   /**
-   * Sets the braking mode of the motors.
+   * Sets the braking mode of the driving motor.
    * 
    * @param the {@link IdleMode} to set motors to.
    */
-  public void setBrakingMode(IdleMode mode) {
-    angleMotor.setIdleMode(mode);
+  public void setDriveBrakingMode(IdleMode mode) {
     driveMotor.setIdleMode(mode);
+  }
+
+
+   /**
+   * Sets the braking mode of the turning motor.
+   * 
+   * @param the {@link IdleMode} to set motors to.
+   */
+  public void setTurnBrakingMode(IdleMode mode) {
+    angleMotor.setIdleMode(mode);
   }
 
   public void stopMotors() {
@@ -195,6 +207,30 @@ public class SwerveDriveModule extends SubsystemBase {
    /** Zeroes the drive encoder. */
    public void resetEncoders() {
     drivingEncoder.setPosition(0);
+  }
+
+  public void setDriveVoltage(double volts) {
+    driveMotor.setVoltage(volts);
+  }
+
+  public void setTurnVoltage(double volts) {
+    angleMotor.setVoltage(volts);
+  }
+
+  public void updateInputs(ModuleIOInputs inputs) {
+    inputs.drivePositionRad = drivingEncoder.getPosition();
+    inputs.driveVelocityRadPerSec = Units.rotationsToRadians(angleEncoder.getVelocity() / SwerveConstants.DRIVING_ENCODER_VELOCITY_CONVERSION_FACTOR);
+    inputs.driveAppliedVolts = driveMotor.getAppliedOutput() * driveMotor.getBusVoltage();
+    inputs.driveCurrentAmps = new double[] {driveMotor.getOutputCurrent()};
+
+    inputs.turnPositionRad = Units.rotationsToRadians(angleEncoder.getPosition());
+    inputs.turnVelocityRadPerSec = Units.rotationsToRadians(angleEncoder.getVelocity() / SwerveConstants.DRIVING_ENCODER_VELOCITY_CONVERSION_FACTOR);
+    inputs.turnAppliedVolts = angleMotor.getAppliedOutput() * angleMotor.getBusVoltage();
+    inputs.turnCurrentAmps = new double[] {angleMotor.getOutputCurrent()};
+  }
+
+  public void periodic() {
+    Logger.getInstance().processInputs("Drive/Module" + Integer.toString(moduleID), inputs);
   }
 
 }

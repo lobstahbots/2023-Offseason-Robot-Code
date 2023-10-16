@@ -72,7 +72,7 @@ public final class Constants {
   }
 
   public static class SwerveConstants {
-    public static final boolean invertGyro = false;
+    public static final boolean invertGyro = true;
 
     public static final double KS = 0;
     public static final double KA = 0;
@@ -99,5 +99,9 @@ public final class Constants {
     public static final double TURN_PID_I = 0;
     public static final double TURN_PID_D = 0;
     public static final double TURN_PID_FF = 0;
+  }
+
+  public static class SimConstants {
+    public static final double LOOP_TIME = 0.02;
   }
 }

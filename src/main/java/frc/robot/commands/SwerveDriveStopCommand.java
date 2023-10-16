@@ -5,20 +5,20 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.subsystems.SwerveDriveBase;
+import frc.robot.subsystems.DriveBase;
 
 public class SwerveDriveStopCommand extends CommandBase {
   /** Creates a new SwerveDriveStopCommand. */
-  private final SwerveDriveBase swerveDriveBase;
-  public SwerveDriveStopCommand(SwerveDriveBase swerveDriveBase) {
-    this.swerveDriveBase = swerveDriveBase;
-    addRequirements(swerveDriveBase);
+  private final DriveBase driveBase;
+  public SwerveDriveStopCommand(DriveBase driveBase) {
+    this.driveBase = driveBase;
+    addRequirements(driveBase);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    swerveDriveBase.stopMotors();
+    driveBase.stopMotors();
   }
 
   // Returns true when the command should end.

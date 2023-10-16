@@ -12,7 +12,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Constants.DriveConstants;
-import frc.robot.subsystems.SwerveDriveBase;
+import frc.robot.subsystems.DriveBase;
 
 public class TrajectoryCommands {
   /** Creates a new TrajectoryCommands. */
@@ -20,7 +20,7 @@ public class TrajectoryCommands {
     // Use addRequirements() here to declare subsystem dependencies.
   }
 
-  public static Command followTrajectoryCommand(SwerveDriveBase driveBase, PathPlannerTrajectory traj, boolean isFirstPath) {
+  public static Command followTrajectoryCommand(DriveBase driveBase, PathPlannerTrajectory traj, boolean isFirstPath) {
     return new SequentialCommandGroup(
          new InstantCommand(() -> {
            // Reset odometry for the first path you run during auto

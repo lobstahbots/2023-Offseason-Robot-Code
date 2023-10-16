@@ -7,7 +7,8 @@ package frc.robot;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.SwerveDriveCommand;
-import frc.robot.subsystems.SwerveDriveBase;
+import frc.robot.subsystems.DriveBase;
+import frc.robot.subsystems.NavXGyro;
 
 import com.pathplanner.lib.PathConstraints;
 import com.pathplanner.lib.PathPlanner;
@@ -26,7 +27,7 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
  */
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
-  private final SwerveDriveBase swerveDriveBase = new SwerveDriveBase();
+  private final DriveBase driveBase;
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
   private final Joystick driverJoystick =
@@ -34,12 +35,13 @@ public class RobotContainer {
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
+    driveBase = new DriveBase(new NavXGyro());
     setTeleopDefaultCommands();
   }
 
   private void setTeleopDefaultCommands() {
-    swerveDriveBase.setDefaultCommand(
-      new SwerveDriveCommand(swerveDriveBase,
+    driveBase.setDefaultCommand(
+      new SwerveDriveCommand(driveBase,
           () -> -driverJoystick.getRawAxis(OperatorConstants.STRAFE_X_AXIS),
           () -> -driverJoystick.getRawAxis(OperatorConstants.STRAFE_Y_AXIS),
           () -> -driverJoystick.getRawAxis(OperatorConstants.ROTATION_AXIS),
@@ -57,8 +59,8 @@ public class RobotContainer {
 
   public void setAutonDefaultCommands() {
     PathPlannerTrajectory trajectory = PathPlanner.loadPath("New Path", new PathConstraints(DriveConstants.MAX_DRIVE_SPEED, DriveConstants.MAX_ACCELERATION));
-    swerveDriveBase.setBrakingMode(IdleMode.kBrake);
-    swerveDriveBase.setDefaultCommand(TrajectoryCommands.followTrajectoryCommand(swerveDriveBase, trajectory, true));
+    driveBase.setDriveBrakingMode(IdleMode.kBrake);
+    driveBase.setDefaultCommand(TrajectoryCommands.followTrajectoryCommand(driveBase, trajectory, true));
   }
 
 }
