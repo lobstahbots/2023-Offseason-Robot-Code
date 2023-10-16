@@ -98,7 +98,7 @@ public class SwerveModule {
 
   /** Returns the current turn angle of the module. */
   public Rotation2d getAngle() {
-    return new Rotation2d(MathUtil.angleModulus(inputs.turnAbsolutePositionRad));
+    return new Rotation2d(MathUtil.angleModulus(inputs.turnPositionRad));
   }
 
   /** Returns the current drive position of the module in meters. */

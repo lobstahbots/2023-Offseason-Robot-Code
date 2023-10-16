@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+
 import org.littletonrobotics.junction.LogFileUtil;
 import org.littletonrobotics.junction.LoggedRobot;
 import org.littletonrobotics.junction.Logger;
@@ -31,21 +32,28 @@ public class Robot extends LoggedRobot {
    */
   @Override
   public void robotInit() {
-    // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
-    // autonomous chooser on the dashboard.
-    Logger.getInstance().recordMetadata("Lobstah Bots", "2023 Swerve Offseason");
-    if (isReal()) {
-      Logger.getInstance().addDataReceiver(new WPILOGWriter("/U")); // Log to a USB stick
-      Logger.getInstance().addDataReceiver(new NT4Publisher()); // Publish data to NetworkTables
+    Logger logger = Logger.getInstance();
+
+    // Record metadata
+    logger.recordMetadata("ProjectName", BuildConstants.MAVEN_NAME);
+    logger.recordMetadata("BuildDate", BuildConstants.BUILD_DATE);
+    logger.recordMetadata("GitSHA", BuildConstants.GIT_SHA);
+    logger.recordMetadata("GitDate", BuildConstants.GIT_DATE);
+    logger.recordMetadata("GitBranch", BuildConstants.GIT_BRANCH);
+    logger.recordMetadata("Lobstah Bots", "2023 Swerve Offseason");
+    if (Robot.isReal()) {
+      logger.addDataReceiver(new WPILOGWriter("/U")); // Log to a USB stick
+      logger.addDataReceiver(new NT4Publisher()); // Publish data to NetworkTables
   } else {
       setUseTiming(false); // Run as fast as possible
-      String logPath = LogFileUtil.findReplayLog(); // Pull the replay log from AdvantageScope (or prompt the user)
-      Logger.getInstance().setReplaySource(new WPILOGReader(logPath)); // Read replay log
-      Logger.getInstance().addDataReceiver(new WPILOGWriter(LogFileUtil.addPathSuffix(logPath, "_sim"))); // Save outputs to a new log
+      String logPath = "sim.txt";
+      // System.out.println(logPath);
+      // logger.setReplaySource(new WPILOGReader(logPath)); // Read replay log
+      logger.addDataReceiver(new WPILOGWriter(LogFileUtil.addPathSuffix(logPath, "_sim"))); // Save outputs to a new log
   }
   
   // Logger.getInstance().disableDeterministicTimestamps() // See "Deterministic Timestamps" in the "Understanding Data Flow" page
-  Logger.getInstance().start();
+   logger.start();
 
     m_robotContainer = new RobotContainer();
   }

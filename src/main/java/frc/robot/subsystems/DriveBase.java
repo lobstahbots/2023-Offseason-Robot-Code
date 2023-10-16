@@ -136,6 +136,7 @@ public void setIsOpenLoop(boolean newValue) {
   public void periodic() {
     swerveOdometry.update(gyro.getYaw(), getPositions());
     field.setRobotPose(getPose());
+    SmartDashboard.putString("Pose", getPose().toString());
     Logger.getInstance().recordOutput("Odometry", getPose());
     gyroIO.updateInputs(gyroInputs);
     Logger.getInstance().processInputs("Drive/Gyro", gyroInputs);

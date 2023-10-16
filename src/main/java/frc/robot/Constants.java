@@ -32,8 +32,8 @@ public final class Constants {
   }
   public static class DriveConstants {
     public static final double MAX_VOLTS = 4.95;
-    public static final double MAX_ACCELERATION = 2;
-    public static final double MAX_DRIVE_SPEED = 10;
+    public static final double MAX_ACCELERATION = 0.5;
+    public static final double MAX_DRIVE_SPEED = 1;
     public static final int DRIVE_MOTOR_CURRENT_LIMIT = 80;
     public static final int ANGLE_MOTOR_CURRENT_LIMIT = 20;
     public static final SwerveDriveKinematics KINEMATICS = new SwerveDriveKinematics(
@@ -74,9 +74,9 @@ public final class Constants {
   public static class SwerveConstants {
     public static final boolean invertGyro = true;
 
-    public static final double KS = 0;
-    public static final double KA = 0;
-    public static final double KV = 0;
+    public static final double KS = 0.1;
+    public static final double KA = 0.1;
+    public static final double KV = 0.1;
 
     public static final double DRIVING_ENCODER_POSITION_CONVERSION_FACTOR = (RobotConstants.WHEEL_DIAMETER * Math.PI) / RobotConstants.DRIVE_GEAR_RATIO;
     public static final double DRIVING_ENCODER_VELOCITY_CONVERSION_FACTOR = DRIVING_ENCODER_POSITION_CONVERSION_FACTOR / 60.0;
