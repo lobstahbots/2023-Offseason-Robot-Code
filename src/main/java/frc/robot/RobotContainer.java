@@ -24,7 +24,6 @@ import com.revrobotics.CANSparkMax.IdleMode;
 
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -76,13 +75,12 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return new WaitCommand(0);
+    PathPlannerTrajectory trajectory = PathPlanner.loadPath("New Path", new PathConstraints(DriveConstants.PATH_MAX_VELOCITY, DriveConstants.PATH_MAX_ACCEL));
+    return TrajectoryCommands.followTrajectoryCommand(driveBase, trajectory, true);
   }
 
   public void setAutonDefaultCommands() {
-    PathPlannerTrajectory trajectory = PathPlanner.loadPath("New Path", new PathConstraints(DriveConstants.MAX_DRIVE_SPEED, DriveConstants.MAX_ACCELERATION));
     driveBase.setBrakingMode(IdleMode.kBrake);
-    driveBase.setDefaultCommand(TrajectoryCommands.followTrajectoryCommand(driveBase, trajectory, true));
   }
 
 }

@@ -14,8 +14,8 @@ import stl.math.LobstahMath;
 
 public class SwerveModuleSim implements SwerveModuleIO {
   /** Creates a new SwerveModuleSim. */
-  private FlywheelSim simDriveMotor = new FlywheelSim(DCMotor.getNEO(1), RobotConstants.DRIVE_GEAR_RATIO, 0.25);
-  private FlywheelSim simAngleMotor = new FlywheelSim(DCMotor.getNEO(1), RobotConstants.ANGLE_GEAR_RATIO, 0.25);
+  private FlywheelSim simDriveMotor = new FlywheelSim(DCMotor.getNEO(1), RobotConstants.DRIVE_GEAR_RATIO, 0.025);
+  private FlywheelSim simAngleMotor = new FlywheelSim(DCMotor.getNEO(1), RobotConstants.ANGLE_GEAR_RATIO, 0.025);
 
   private double driveAppliedVolts = 0.0;
   private double turnAppliedVolts = 0.0;

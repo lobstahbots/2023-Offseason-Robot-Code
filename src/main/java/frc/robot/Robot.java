@@ -5,6 +5,8 @@
 package frc.robot;
 
 
+import java.io.File;
+
 import org.littletonrobotics.junction.LogFileUtil;
 import org.littletonrobotics.junction.LoggedRobot;
 import org.littletonrobotics.junction.Logger;
@@ -12,6 +14,9 @@ import org.littletonrobotics.junction.networktables.NT4Publisher;
 import org.littletonrobotics.junction.wpilog.WPILOGReader;
 import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 
+import com.pathplanner.lib.server.PathPlannerServer;
+
+import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 
@@ -32,6 +37,7 @@ public class Robot extends LoggedRobot {
    */
   @Override
   public void robotInit() {
+
     Logger logger = Logger.getInstance();
 
     // Record metadata
@@ -46,14 +52,17 @@ public class Robot extends LoggedRobot {
       logger.addDataReceiver(new NT4Publisher()); // Publish data to NetworkTables
   } else {
       setUseTiming(false); // Run as fast as possible
-      String logPath = "sim.txt";
+      File log = new File (Filesystem.getOperatingDirectory(), "log");
+      String logPath = log.getAbsolutePath();
       // System.out.println(logPath);
       // logger.setReplaySource(new WPILOGReader(logPath)); // Read replay log
-      logger.addDataReceiver(new WPILOGWriter(LogFileUtil.addPathSuffix(logPath, "_sim"))); // Save outputs to a new log
+      logger.addDataReceiver(new WPILOGWriter(logPath)); // Save outputs to a new log
   }
   
   // Logger.getInstance().disableDeterministicTimestamps() // See "Deterministic Timestamps" in the "Understanding Data Flow" page
    logger.start();
+
+   PathPlannerServer.startServer(5810);
 
     m_robotContainer = new RobotContainer();
   }

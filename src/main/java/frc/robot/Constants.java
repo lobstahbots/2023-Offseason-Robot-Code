@@ -32,8 +32,8 @@ public final class Constants {
   }
   public static class DriveConstants {
     public static final double MAX_VOLTS = 4.95;
-    public static final double MAX_ACCELERATION = 0.5;
-    public static final double MAX_DRIVE_SPEED = 1;
+    public static final double MAX_ACCELERATION = 0.1;
+    public static final double MAX_DRIVE_SPEED = 0.1;
     public static final int DRIVE_MOTOR_CURRENT_LIMIT = 80;
     public static final int ANGLE_MOTOR_CURRENT_LIMIT = 20;
     public static final SwerveDriveKinematics KINEMATICS = new SwerveDriveKinematics(
@@ -44,6 +44,9 @@ public final class Constants {
 
     public static final boolean FIELD_CENTRIC = true;
     public static final boolean IS_OPEN_LOOP = false;
+
+    public static final double PATH_MAX_ACCEL = 3;
+    public static final double PATH_MAX_VELOCITY = 3;
 
     public static class FrontLeftModuleConstants {
       public static final int moduleID = 0;
@@ -78,7 +81,7 @@ public final class Constants {
     public static final double KA = 0.1;
     public static final double KV = 0.1;
 
-    public static final double DRIVING_ENCODER_POSITION_CONVERSION_FACTOR = (RobotConstants.WHEEL_DIAMETER * Math.PI) / RobotConstants.DRIVE_GEAR_RATIO;
+    public static final double DRIVING_ENCODER_POSITION_CONVERSION_FACTOR = (RobotConstants.WHEEL_DIAMETER * Math.PI) / (RobotConstants.DRIVE_GEAR_RATIO);
     public static final double DRIVING_ENCODER_VELOCITY_CONVERSION_FACTOR = DRIVING_ENCODER_POSITION_CONVERSION_FACTOR / 60.0;
     public static final double TURNING_ENCODER_POSITION_CONVERSION_FACTOR = 2 * Math.PI;
     public static final double TURNING_ENCODER_VELOCITY_CONVERSION_FACTOR = 2 * Math.PI / 60.0;
