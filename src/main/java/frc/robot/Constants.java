@@ -24,8 +24,8 @@ public final class Constants {
     public static final int ROTATION_AXIS = 2;
   }
   public static class RobotConstants {
-    public static final double TRACK_WIDTH = Units.inchesToMeters(24);
-    public static final double WHEELBASE = Units.inchesToMeters(24);
+    public static final double TRACK_WIDTH = Units.inchesToMeters(20);
+    public static final double WHEELBASE = Units.inchesToMeters(20);
     public static final double WHEEL_DIAMETER = Units.inchesToMeters(3);
     public static final double DRIVE_GEAR_RATIO = 4.71;
     public static final double ANGLE_GEAR_RATIO = 6.1;
@@ -83,8 +83,8 @@ public final class Constants {
 
     public static final double DRIVING_ENCODER_POSITION_CONVERSION_FACTOR = (RobotConstants.WHEEL_DIAMETER * Math.PI) / (RobotConstants.DRIVE_GEAR_RATIO);
     public static final double DRIVING_ENCODER_VELOCITY_CONVERSION_FACTOR = DRIVING_ENCODER_POSITION_CONVERSION_FACTOR / 60.0;
-    public static final double TURNING_ENCODER_POSITION_CONVERSION_FACTOR = 2 * Math.PI;
-    public static final double TURNING_ENCODER_VELOCITY_CONVERSION_FACTOR = 2 * Math.PI / 60.0;
+    public static final double TURNING_ENCODER_POSITION_CONVERSION_FACTOR = 1/360;
+    public static final double TURNING_ENCODER_VELOCITY_CONVERSION_FACTOR = TURNING_ENCODER_POSITION_CONVERSION_FACTOR / 60.0;
 
     public static final double TURN_PID_MIN_INPUT = 0;
     public static final double TURN_PID_MAX_INPUT = TURNING_ENCODER_POSITION_CONVERSION_FACTOR;

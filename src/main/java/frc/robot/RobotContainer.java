@@ -16,10 +16,6 @@ import frc.robot.subsystems.GyroIO;
 import frc.robot.subsystems.NavXGyro;
 import frc.robot.subsystems.SwerveModuleReal;
 import frc.robot.subsystems.SwerveModuleSim;
-
-import com.pathplanner.lib.PathConstraints;
-import com.pathplanner.lib.PathPlanner;
-import com.pathplanner.lib.PathPlannerTrajectory;
 import com.revrobotics.CANSparkMax.IdleMode;
 
 import edu.wpi.first.wpilibj.Joystick;
@@ -75,8 +71,7 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    PathPlannerTrajectory trajectory = PathPlanner.loadPath("New Path", new PathConstraints(DriveConstants.PATH_MAX_VELOCITY, DriveConstants.PATH_MAX_ACCEL));
-    return TrajectoryCommands.followTrajectoryCommand(driveBase, trajectory, true);
+    return driveBase.followPathCommand("New Path");
   }
 
   public void setAutonDefaultCommands() {

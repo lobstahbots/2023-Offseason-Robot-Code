@@ -5,6 +5,12 @@
 package frc.robot.subsystems;
 import org.littletonrobotics.junction.Logger;
 
+import com.pathplanner.lib.commands.FollowPathHolonomic;
+import com.pathplanner.lib.commands.FollowPathWithEvents;
+import com.pathplanner.lib.path.PathPlannerPath;
+import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
+import com.pathplanner.lib.util.PIDConstants;
+import com.pathplanner.lib.util.ReplanningConfig;
 import com.revrobotics.CANSparkMax.IdleMode;
 
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
@@ -21,6 +27,7 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.RobotConstants;
@@ -87,7 +94,7 @@ public class DriveBase extends SubsystemBase {
     return positions;
   }
 
-  public void drive(Translation2d translation, double rotation, boolean fieldRelative) {
+  public void swerveDrive(Translation2d translation, double rotation, boolean fieldRelative) {
     SwerveModuleState[] swerveModuleStates =
         DriveConstants.KINEMATICS.toSwerveModuleStates(
             fieldRelative
@@ -99,6 +106,11 @@ public class DriveBase extends SubsystemBase {
     for (SwerveModule module : modules) {
       module.setDesiredState(swerveModuleStates[module.getModuleID()], isOpenLoop);
     }
+}
+
+public void driveRobotRelative(ChassisSpeeds chassisSpeeds) {
+  SwerveModuleState[] desiredStates = DriveConstants.KINEMATICS.toSwerveModuleStates(chassisSpeeds);
+  this.setModuleStates(desiredStates);
 }
 
 public SwerveModuleState[] setModuleStates(SwerveModuleState[] desiredStates) {
@@ -129,7 +141,34 @@ public boolean isOpenLoop() {
 
 public void setIsOpenLoop(boolean newValue) {
   isOpenLoop = newValue;
-  
+}
+
+public ChassisSpeeds getRobotRelativeSpeeds() {
+  return ChassisSpeeds.fromFieldRelativeSpeeds(DriveConstants.KINEMATICS.toChassisSpeeds(getStates()), gyro.getYaw());
+} 
+
+public Command followPathCommand(String pathName){
+  PathPlannerPath path = PathPlannerPath.fromPathFile(pathName);
+
+  // You must wrap the path following command in a FollowPathWithEvents command in order for event markers to work
+  return new FollowPathWithEvents(
+      new FollowPathHolonomic(
+          path,
+          this::getPose, // Robot pose supplier
+          this::getRobotRelativeSpeeds, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
+          this::driveRobotRelative, // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds
+          new HolonomicPathFollowerConfig( // HolonomicPathFollowerConfig, this should likely live in your Constants class
+              new PIDConstants(5.0, 0.0, 0.0), // Translation PID constants
+              new PIDConstants(5.0, 0.0, 0.0), // Rotation PID constants
+              4.5, // Max module speed, in m/s
+              0.36, // Drive base radius in meters. Distance from robot center to furthest module.
+              new ReplanningConfig() // Default path replanning config. See the API for the options here
+          ),
+          this // Reference to this subsystem to set requirements
+      ),
+      path, // FollowPathWithEvents also requires the path
+      this::getPose // FollowPathWithEvents also requires the robot pose supplier
+  );
 }
 
   @Override
