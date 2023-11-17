@@ -24,6 +24,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Robot;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.RobotConstants;
 import frc.robot.Constants.SimConstants;
@@ -37,6 +38,7 @@ public class DriveBase extends SubsystemBase {
   private final GyroIO gyroIO;
   private final GyroIOInputsAutoLogged gyroInputs = new GyroIOInputsAutoLogged();
   private boolean isOpenLoop;
+  private Rotation2d simRotation = new Rotation2d();
 
   private ChassisSpeeds setpoint = new ChassisSpeeds();
 
@@ -118,8 +120,23 @@ public SwerveModuleState[] setModuleStates(SwerveModuleState[] desiredStates) {
   return optimizedStates;
 }
 
+public ChassisSpeeds getFieldRelativeChassisSpeeds(ChassisSpeeds robotRelativeSpeeds) {
+  Rotation2d angle = new Rotation2d();
+  if(Robot.isSimulation()) {
+    angle = simRotation;
+  } else {
+    angle = getPose().getRotation();
+  }
+  return new ChassisSpeeds(
+    robotRelativeSpeeds.vxMetersPerSecond * angle.getCos()
+                  - robotRelativeSpeeds.vyMetersPerSecond * angle.getSin(),
+                  robotRelativeSpeeds.vyMetersPerSecond * angle.getCos()
+                  + robotRelativeSpeeds.vxMetersPerSecond * angle.getSin(),
+                  robotRelativeSpeeds.omegaRadiansPerSecond);
+}
+
 public void setChassisSpeeds(ChassisSpeeds chassisSpeeds) {
-  setpoint = chassisSpeeds;
+  setpoint = getFieldRelativeChassisSpeeds(chassisSpeeds);
 }
 
 public void setBrakingMode(IdleMode mode) {
@@ -148,7 +165,14 @@ public ChassisSpeeds getRobotRelativeSpeeds() {
 
   @Override
   public void periodic() {
-    swerveOdometry.update(gyro.getYaw(), getPositions());
+    if(Robot.isSimulation()) {
+      var twist = DriveConstants.KINEMATICS.toTwist2d(getPositions());
+      simRotation = Rotation2d.fromDegrees(twist.dtheta);
+      SmartDashboard.putNumber("Twist Theta", twist.dtheta);
+      swerveOdometry.update(simRotation, getPositions());
+    } else {
+      swerveOdometry.update(gyro.getYaw(), getPositions());
+    }
     field.setRobotPose(getPose());
     SmartDashboard.putString("Pose", getPose().toString());
     Logger.getInstance().recordOutput("Odometry", getPose());
@@ -195,7 +219,7 @@ public ChassisSpeeds getRobotRelativeSpeeds() {
       }
 
       states = newStates;
-
+      
     Logger.getInstance().recordOutput("SwerveStates/Desired", setModuleStates(newStates));
     Logger.getInstance().recordOutput("SwerveStates/Measured", getStates());
     Logger.getInstance().recordOutput("Odometry/Robot", getPose());
