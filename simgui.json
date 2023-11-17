@@ -1,11 +1,6 @@
 {
   "HALProvider": {
     "Other Devices": {
-      "navX-Sensor[0]": {
-        "header": {
-          "open": true
-        }
-      },
       "window": {
         "visible": false
       }
@@ -24,31 +19,18 @@
       }
     }
   },
-  "NetworkTables": {
-    "transitory": {
-      "Shuffleboard": {
-        ".metadata": {
-          "open": true
-        },
-        ".recording": {
-          "open": true
-        },
-        "open": true
-      }
-    }
-  },
   "NetworkTables Info": {
     "Connections": {
-      "open": true
+      "open": false
     },
     "Server": {
       "Publishers": {
-        "open": true
+        "open": false
       },
       "Subscribers": {
-        "open": true
+        "open": false
       },
-      "open": true
+      "open": false
     }
   }
 }

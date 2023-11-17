@@ -47,7 +47,7 @@ public class SwerveModuleReal implements SwerveModuleIO {
    * @param driveMotorID The CAN ID of the motor controlling drive speed.
    * @param angularOffsetDegrees The offset angle in degrees.
   */
-  public SwerveModuleReal (int moduleID, int angleMotorID, int driveMotorID, double angularOffsetDegrees) {
+  public SwerveModuleReal (int moduleID, int angleMotorID, int driveMotorID, double angularOffsetDegrees, boolean inverted) {
     this.moduleID = moduleID;
 
     this.angleMotor = new CANSparkMax(angleMotorID, MotorType.kBrushless);
@@ -59,6 +59,8 @@ public class SwerveModuleReal implements SwerveModuleIO {
     angleMotor.setIdleMode(IdleMode.kBrake);
     driveMotor.setSmartCurrentLimit(DriveConstants.DRIVE_MOTOR_CURRENT_LIMIT);
     angleMotor.setSmartCurrentLimit(DriveConstants.ANGLE_MOTOR_CURRENT_LIMIT);
+
+    driveMotor.setInverted(inverted);
 
     driveController = this.driveMotor.getPIDController();
     angleController = this.angleMotor.getPIDController();

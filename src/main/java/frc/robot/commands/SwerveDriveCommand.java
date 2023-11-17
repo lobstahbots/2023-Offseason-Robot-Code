@@ -7,6 +7,7 @@ package frc.robot.commands;
 import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.DriveBase;
 
@@ -34,7 +35,7 @@ public class SwerveDriveCommand extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    driveBase.swerveDrive(new Translation2d(strafeXSupplier.getAsDouble(), strafeYSupplier.getAsDouble()), rotationSupplier.getAsDouble(), fieldCentric);
+    driveBase.setChassisSpeeds(new ChassisSpeeds(strafeXSupplier.getAsDouble(), strafeYSupplier.getAsDouble(), rotationSupplier.getAsDouble()));
   }
 
   // Returns true when the command should end.

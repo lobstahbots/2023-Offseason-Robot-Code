@@ -5,12 +5,6 @@
 package frc.robot.subsystems;
 import org.littletonrobotics.junction.Logger;
 
-import com.pathplanner.lib.commands.FollowPathHolonomic;
-import com.pathplanner.lib.commands.FollowPathWithEvents;
-import com.pathplanner.lib.path.PathPlannerPath;
-import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
-import com.pathplanner.lib.util.PIDConstants;
-import com.pathplanner.lib.util.ReplanningConfig;
 import com.revrobotics.CANSparkMax.IdleMode;
 
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
@@ -24,10 +18,11 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTablesJNI;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.RobotConstants;
@@ -55,9 +50,9 @@ public class DriveBase extends SubsystemBase {
 
   private Field2d field;
 
-  public DriveBase(GyroIO gyroIO, SwerveModuleIO frontLeft, SwerveModuleIO frontRight, SwerveModuleIO backRight, SwerveModuleIO backLeft, boolean isOpenLoop) {
+  public DriveBase(GyroIO gyroIO, SwerveModuleIO frontLeft, SwerveModuleIO frontRight, SwerveModuleIO backLeft, SwerveModuleIO backRight, boolean isOpenLoop) {
 
-    this.modules = new SwerveModule[]{new SwerveModule(frontLeft, 0), new SwerveModule(frontRight, 1), new SwerveModule(backRight, 2), new SwerveModule(backLeft, 3)};
+    this.modules = new SwerveModule[]{new SwerveModule(frontLeft, 0), new SwerveModule(frontRight, 1), new SwerveModule(backLeft, 2), new SwerveModule(backRight, 3)};
     
     this.gyroIO = gyroIO;
 
@@ -123,6 +118,10 @@ public SwerveModuleState[] setModuleStates(SwerveModuleState[] desiredStates) {
   return optimizedStates;
 }
 
+public void setChassisSpeeds(ChassisSpeeds chassisSpeeds) {
+  setpoint = chassisSpeeds;
+}
+
 public void setBrakingMode(IdleMode mode) {
   for(SwerveModule module: modules) {
     module.setBrakingMode(mode);
@@ -147,30 +146,6 @@ public ChassisSpeeds getRobotRelativeSpeeds() {
   return ChassisSpeeds.fromFieldRelativeSpeeds(DriveConstants.KINEMATICS.toChassisSpeeds(getStates()), gyro.getYaw());
 } 
 
-public Command followPathCommand(String pathName){
-  PathPlannerPath path = PathPlannerPath.fromPathFile(pathName);
-
-  // You must wrap the path following command in a FollowPathWithEvents command in order for event markers to work
-  return new FollowPathWithEvents(
-      new FollowPathHolonomic(
-          path,
-          this::getPose, // Robot pose supplier
-          this::getRobotRelativeSpeeds, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
-          this::driveRobotRelative, // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds
-          new HolonomicPathFollowerConfig( // HolonomicPathFollowerConfig, this should likely live in your Constants class
-              new PIDConstants(5.0, 0.0, 0.0), // Translation PID constants
-              new PIDConstants(5.0, 0.0, 0.0), // Rotation PID constants
-              4.5, // Max module speed, in m/s
-              0.36, // Drive base radius in meters. Distance from robot center to furthest module.
-              new ReplanningConfig() // Default path replanning config. See the API for the options here
-          ),
-          this // Reference to this subsystem to set requirements
-      ),
-      path, // FollowPathWithEvents also requires the path
-      this::getPose // FollowPathWithEvents also requires the robot pose supplier
-  );
-}
-
   @Override
   public void periodic() {
     swerveOdometry.update(gyro.getYaw(), getPositions());
@@ -192,7 +167,8 @@ public Command followPathCommand(String pathName){
       // Clear setpoint logs
       Logger.getInstance().recordOutput("SwerveStates/Desired", new double[] {});
 
-    } else {
+    } 
+    else {
       Twist2d setpointTwist =
           new Pose2d()
               .log(
