@@ -67,7 +67,7 @@ public final class Constants {
       public static final int driveID = 0;
       public static final int angleID = 0;
       public static final double angleOffset = 0;
-      public static final boolean inverted = true;
+      public static final boolean inverted = false;
     }
     public static class BackRightModuleConstants {
       public static final int moduleID = 3;

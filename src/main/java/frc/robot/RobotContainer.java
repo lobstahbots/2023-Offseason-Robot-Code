@@ -72,7 +72,7 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return new WaitCommand(0);
+    return driveBase.followPathCommand("Example Path");
   }
 
   public void setAutonDefaultCommands() {
