@@ -5,6 +5,7 @@
 package frc.robot.subsystems;
 import org.littletonrobotics.junction.Logger;
 
+import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.commands.FollowPathHolonomic;
 import com.pathplanner.lib.commands.FollowPathWithEvents;
 import com.pathplanner.lib.path.PathPlannerPath;
@@ -27,7 +28,6 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Robot;
 import frc.robot.Constants.DriveConstants;
@@ -70,6 +70,25 @@ public class DriveBase extends SubsystemBase {
     SmartDashboard.putData("Field", field);
 
     this.isOpenLoop = isOpenLoop;
+
+    AutoBuilder.configureHolonomic(
+        this::getPose, // Robot pose supplier
+        this::resetPose, // Method to reset odometry (will be called if your auto has a starting pose)
+        this::getRobotRelativeSpeeds, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
+        this::driveRobotRelative, // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds
+        new HolonomicPathFollowerConfig( // HolonomicPathFollowerConfig, this should likely live in your Constants class
+            new PIDConstants(5.0, 0.0, 0.0), // Translation PID constants
+            new PIDConstants(5.0, 0.0, 0.0), // Rotation PID constants
+            4.5, // Max module speed, in m/s
+            0.4, // Drive base radius in meters. Distance from robot center to furthest module.
+            new ReplanningConfig() // Default path replanning config. See the API for the options here
+        ),
+        this // Reference to this subsystem to set requirements
+    );
+  }
+
+  public void resetPose(Pose2d pose) {
+    swerveOdometry.resetPosition(gyro.getYaw(), getPositions(), pose);
   }
   
   public Pose2d getPose() {
@@ -167,31 +186,6 @@ public void setIsOpenLoop(boolean newValue) {
 public ChassisSpeeds getRobotRelativeSpeeds() {
   return ChassisSpeeds.fromFieldRelativeSpeeds(DriveConstants.KINEMATICS.toChassisSpeeds(getStates()), gyro.getYaw());
 } 
-
-public Command followPathCommand(String pathName){
-    PathPlannerPath path = PathPlannerPath.fromPathFile(pathName);
-    // Logger.recordOutput("Path", path.getAllPathPoints());
-
-    // You must wrap the path following command in a FollowPathWithEvents command in order for event markers to work
-    return new FollowPathWithEvents(
-        new FollowPathHolonomic(
-            path,
-            this::getPose, // Robot pose supplier
-            this::getRobotRelativeSpeeds, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
-            this::driveRobotRelative, // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds
-            new HolonomicPathFollowerConfig( // HolonomicPathFollowerConfig, this should likely live in your Constants class
-                new PIDConstants(5.0, 0.0, 0.4), // Translation PID constants
-                new PIDConstants(5.0, 0.0, 0.4), // Rotation PID constants
-                4.5, // Max module speed, in m/s
-                0.4, // Drive base radius in meters. Distance from robot center to furthest module.
-                new ReplanningConfig() // Default path replanning config. See the API for the options here
-            ),
-            this // Reference to this subsystem to set requirements
-        ),
-        path, // FollowPathWithEvents also requires the path
-        this::getPose // FollowPathWithEvents also requires the robot pose supplier
-    );
-}
 
   @Override
   public void periodic() {
