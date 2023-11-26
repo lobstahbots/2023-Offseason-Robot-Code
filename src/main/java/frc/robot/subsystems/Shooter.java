@@ -14,6 +14,13 @@ public class Shooter extends SubsystemBase {
   private final CANSparkMax auxiliaryMotor;
   private final CANSparkMax mainMotor;
 
+  /**
+   * Constructs a Shooter with main and auxiliary motors controlled by
+   * {@link CANSparkMax}es.
+   * 
+   * @param mainMotorID      The ID of the main motor controller.
+   * @param auxiliaryMotorID The ID of the auxiliary motor controller.
+   */
   public Shooter(int mainMotorID, int auxiliaryMotorID) {
     this.auxiliaryMotor = new CANSparkMax(auxiliaryMotorID, CANSparkMaxLowLevel.MotorType.kBrushless);
     this.mainMotor = new CANSparkMax(mainMotorID, CANSparkMaxLowLevel.MotorType.kBrushless);
@@ -21,20 +28,35 @@ public class Shooter extends SubsystemBase {
     this.mainMotor.setIdleMode(CANSparkMax.IdleMode.kBrake);
   }
 
+  /**
+   * Drives the auxiliary motor.
+   * 
+   * @param auxiliarySpeed The speed at which to drive the motor; in [-1, 1].
+   */
   public void auxiliaryDrive(double auxiliarySpeed) {
     auxiliaryMotor.set(auxiliarySpeed);
   }
 
+  /**
+   * Drives the main motor.
+   * 
+   * @param mainSpeed The speed at which to drive the motor; in [-1, 1].
+   */
   public void mainDrive(double mainSpeed) {
     mainMotor.set(mainSpeed);
   }
 
-  public void drive(double speed) {
-    auxiliaryDrive(speed);
-    mainDrive(speed);
+  /**
+   * Stops the main motor.
+   */
+  public void stopMain() {
+    mainMotor.stopMotor();
   }
 
-  public void stopDrive() {
-    drive(0);
+  /**
+   * Stops the auxiliary motor.
+   */
+  public void stopAuxiliary() {
+    auxiliaryMotor.stopMotor();
   }
 }
