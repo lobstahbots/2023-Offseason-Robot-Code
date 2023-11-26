@@ -6,6 +6,7 @@ package frc.robot;
 
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.OperatorConstants;
+import frc.robot.Constants.PathConstants;
 import frc.robot.Constants.DriveConstants.BackLeftModuleConstants;
 import frc.robot.Constants.DriveConstants.BackRightModuleConstants;
 import frc.robot.Constants.DriveConstants.FrontLeftModuleConstants;
@@ -35,6 +36,8 @@ public class RobotContainer {
   // Replace with CommandPS4Controller or CommandJoystick if needed
   private final Joystick driverJoystick =
       new Joystick(OperatorConstants.DRIVER_CONTROLLER_PORT);
+
+  private final TrajectoryFactory trajectoryFactory = new TrajectoryFactory();
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -72,7 +75,7 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return new WaitCommand(0);
+    return trajectoryFactory.getPathFindToPoseCommand(PathConstants.TARGET_POSE);
   }
 
   public void setAutonDefaultCommands() {

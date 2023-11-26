@@ -8,11 +8,11 @@ import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.DriveBase;
 
 /** An example command that uses an example subsystem. */
-public class SwerveDriveCommand extends CommandBase {
+public class SwerveDriveCommand extends Command {
   private final DriveBase driveBase;
   private final DoubleSupplier strafeXSupplier;
   private final DoubleSupplier strafeYSupplier;

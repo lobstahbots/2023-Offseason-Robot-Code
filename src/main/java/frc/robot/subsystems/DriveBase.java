@@ -5,6 +5,13 @@
 package frc.robot.subsystems;
 import org.littletonrobotics.junction.Logger;
 
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.commands.FollowPathHolonomic;
+import com.pathplanner.lib.commands.FollowPathWithEvents;
+import com.pathplanner.lib.path.PathPlannerPath;
+import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
+import com.pathplanner.lib.util.PIDConstants;
+import com.pathplanner.lib.util.ReplanningConfig;
 import com.revrobotics.CANSparkMax.IdleMode;
 
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
@@ -18,8 +25,6 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.networktables.NetworkTable;
-import edu.wpi.first.networktables.NetworkTablesJNI;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -65,6 +70,25 @@ public class DriveBase extends SubsystemBase {
     SmartDashboard.putData("Field", field);
 
     this.isOpenLoop = isOpenLoop;
+
+    AutoBuilder.configureHolonomic(
+        this::getPose, // Robot pose supplier
+        this::resetPose, // Method to reset odometry (will be called if your auto has a starting pose)
+        this::getRobotRelativeSpeeds, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
+        this::driveRobotRelative, // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds
+        new HolonomicPathFollowerConfig( // HolonomicPathFollowerConfig, this should likely live in your Constants class
+            new PIDConstants(5.0, 0.0, 0.0), // Translation PID constants
+            new PIDConstants(5.0, 0.0, 0.0), // Rotation PID constants
+            4.5, // Max module speed, in m/s
+            0.4, // Drive base radius in meters. Distance from robot center to furthest module.
+            new ReplanningConfig() // Default path replanning config. See the API for the options here
+        ),
+        this // Reference to this subsystem to set requirements
+    );
+  }
+
+  public void resetPose(Pose2d pose) {
+    swerveOdometry.resetPosition(gyro.getYaw(), getPositions(), pose);
   }
   
   public Pose2d getPose() {
@@ -175,9 +199,9 @@ public ChassisSpeeds getRobotRelativeSpeeds() {
     }
     field.setRobotPose(getPose());
     SmartDashboard.putString("Pose", getPose().toString());
-    Logger.getInstance().recordOutput("Odometry", getPose());
+    Logger.recordOutput("Odometry", getPose());
     gyroIO.updateInputs(gyroInputs);
-    Logger.getInstance().processInputs("Drive/Gyro", gyroInputs);
+    Logger.processInputs("Drive/Gyro", gyroInputs);
     for (SwerveModule module : modules) {
       module.periodic();
     }
@@ -189,7 +213,7 @@ public ChassisSpeeds getRobotRelativeSpeeds() {
       }
 
       // Clear setpoint logs
-      Logger.getInstance().recordOutput("SwerveStates/Desired", new double[] {});
+      Logger.recordOutput("SwerveStates/Desired", new double[] {});
 
     } 
     else {
@@ -220,9 +244,9 @@ public ChassisSpeeds getRobotRelativeSpeeds() {
 
       states = newStates;
       
-    Logger.getInstance().recordOutput("SwerveStates/Desired", setModuleStates(newStates));
-    Logger.getInstance().recordOutput("SwerveStates/Measured", getStates());
-    Logger.getInstance().recordOutput("Odometry/Robot", getPose());
+    Logger.recordOutput("SwerveStates/Desired", setModuleStates(newStates));
+    Logger.recordOutput("SwerveStates/Measured", getStates());
+    Logger.recordOutput("Odometry/Robot", getPose());
     
     // Log 3D odometry pose
     Pose3d robotPose3d = new Pose3d(getPose());
@@ -245,7 +269,7 @@ public ChassisSpeeds getRobotRelativeSpeeds() {
                     0.0,
                     0.0));
 
-    Logger.getInstance().recordOutput("Odometry/Robot3d", robotPose3d);
+    Logger.recordOutput("Odometry/Robot3d", robotPose3d);
     }
   }
 }
