@@ -6,6 +6,7 @@ package frc.robot;
 
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.OperatorConstants;
+import frc.robot.Constants.ShooterConstants;
 import frc.robot.Constants.DriveConstants.BackLeftModuleConstants;
 import frc.robot.Constants.DriveConstants.BackRightModuleConstants;
 import frc.robot.Constants.DriveConstants.FrontLeftModuleConstants;
@@ -14,6 +15,7 @@ import frc.robot.commands.SwerveDriveCommand;
 import frc.robot.subsystems.DriveBase;
 import frc.robot.subsystems.GyroIO;
 import frc.robot.subsystems.NavXGyro;
+import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.SwerveModuleReal;
 import frc.robot.subsystems.SwerveModuleSim;
 import com.revrobotics.CANSparkMax.IdleMode;
@@ -31,6 +33,8 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   private final DriveBase driveBase;
+
+  private final Shooter shooter = new Shooter(ShooterConstants.MAIN_MOTOR_ID, ShooterConstants.AUXILIARY_MOTOR_ID);
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
   private final Joystick driverJoystick =
