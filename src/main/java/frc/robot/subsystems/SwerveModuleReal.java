@@ -213,7 +213,7 @@ public class SwerveModuleReal implements SwerveModuleIO {
   }
 
   public void periodic() {
-    Logger.getInstance().processInputs("Drive/Module" + Integer.toString(moduleID), inputs);
+    Logger.processInputs("Drive/Module" + Integer.toString(moduleID), inputs);
   }
 
 }
