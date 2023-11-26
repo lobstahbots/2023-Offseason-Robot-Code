@@ -21,11 +21,13 @@ public class Shooter extends SubsystemBase {
    * @param mainMotorID      The ID of the main motor controller.
    * @param auxiliaryMotorID The ID of the auxiliary motor controller.
    */
-  public Shooter(int mainMotorID, int auxiliaryMotorID) {
+  public Shooter(int mainMotorID, int auxiliaryMotorID, int currentLimit) {
     this.auxiliaryMotor = new CANSparkMax(auxiliaryMotorID, CANSparkMaxLowLevel.MotorType.kBrushless);
     this.mainMotor = new CANSparkMax(mainMotorID, CANSparkMaxLowLevel.MotorType.kBrushless);
     this.auxiliaryMotor.setIdleMode(CANSparkMax.IdleMode.kBrake);
     this.mainMotor.setIdleMode(CANSparkMax.IdleMode.kBrake);
+    this.auxiliaryMotor.setSmartCurrentLimit(currentLimit);
+    this.mainMotor.setSmartCurrentLimit(currentLimit);
   }
 
   /**
