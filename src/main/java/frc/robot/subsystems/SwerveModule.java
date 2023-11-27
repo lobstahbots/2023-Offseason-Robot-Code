@@ -18,7 +18,6 @@ import frc.robot.Robot;
 import frc.robot.Constants.RobotConstants;
 import frc.robot.Constants.SwerveConstants;
 
-/** Add your docs here. */
 public class SwerveModule {
   private final int moduleID;
   private final ModuleIOInputsAutoLogged inputs = new ModuleIOInputsAutoLogged();
@@ -29,6 +28,12 @@ public class SwerveModule {
   private final PIDController driveController;
   private final PIDController angleController;
 
+  /**
+   * Constructs a SwerveModule. The SwerveModule class contains methods relating to both real and simulated modules, whereas SwerveModuleReal and SwerveModuleSim are implementations of SwerveModule IO that contain methods specific to a case.
+   * 
+   * @param io the {@link SwerveModuleIO} that handles loggable fields as 
+   * @param moduleID The module ID number. ID numbers range from 0-3: FrontLeft, BackLeft, FrontRight, BackRight.
+   */
   public SwerveModule(SwerveModuleIO io, int moduleID) {
     this.io = io;
     this.moduleID = moduleID;
@@ -38,6 +43,7 @@ public class SwerveModule {
         SwerveConstants.TURN_PID_D);
   }
 
+  /**Sets the voltages of both motors to 0 */
   public void stop() {
     io.setDriveVoltage(0);
     io.setTurnVoltage(0);
@@ -58,7 +64,7 @@ public class SwerveModule {
   }
 
   /**
-   * Sets the desired state for the module.
+   * Sets the desired state for the module. Optimizes state.
    *
    * @param desiredState A {@link SwerveModuleState} with desired speed and angle.
    */

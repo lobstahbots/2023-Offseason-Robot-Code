@@ -6,9 +6,6 @@ package frc.robot.subsystems;
 import org.littletonrobotics.junction.Logger;
 
 import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.commands.FollowPathHolonomic;
-import com.pathplanner.lib.commands.FollowPathWithEvents;
-import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
 import com.pathplanner.lib.util.PIDConstants;
 import com.pathplanner.lib.util.ReplanningConfig;
@@ -87,18 +84,26 @@ public class DriveBase extends SubsystemBase {
     );
   }
 
+  /**Resets pose of odometry to a given pose.
+   * 
+   * @param pose The desired pose to reset the odometry to.
+   */
   public void resetPose(Pose2d pose) {
     swerveOdometry.resetPosition(gyro.getYaw(), getPositions(), pose);
   }
   
+  /**Gets pose from odometry.
+   * 
+   * @return The current estimated pose of the odometry
+   */
   public Pose2d getPose() {
     return swerveOdometry.getEstimatedPosition();
   }
 
-  public void resetOdometry(Pose2d pose) {
-    swerveOdometry.resetPosition(gyro.getYaw(), getPositions(), pose);
-  }
-
+  /**Gets states of the four swerve modules.
+   * 
+   * @return The states of the four swerve modules in a {@link SwerveModuleState} array.
+   */
   public SwerveModuleState[] getStates() {
     SwerveModuleState[] states = new SwerveModuleState[4];
     for (SwerveModule module : modules) {
@@ -107,6 +112,10 @@ public class DriveBase extends SubsystemBase {
     return states;
   }
 
+  /**Gets positions of the four swerve modules.
+   * 
+   * @return The positions of the four swerve modules in a {@link SwerveModulePosition} array.
+   */
   public SwerveModulePosition[] getPositions() {
     SwerveModulePosition[] positions = new SwerveModulePosition[4];
     for (SwerveModule module : modules) {
@@ -114,7 +123,22 @@ public class DriveBase extends SubsystemBase {
     }
     return positions;
   }
+ 
+  /**Gets robot relative ChassisSpeeds.
+   * 
+   * @return The robot-relative {@link ChassisSpeeds}.
+   */
+  public ChassisSpeeds getRobotRelativeSpeeds() {
+  return ChassisSpeeds.fromFieldRelativeSpeeds(DriveConstants.KINEMATICS.toChassisSpeeds(getStates()), gyro.getYaw());
+ } 
 
+ /**
+  * Drives the robot according to desired translation vector. 
+  *
+  * @param translation The desired translation vector.
+  * @param rotation The rotation of the robot.
+  * @param fieldRelative Whether or not to drive field relative.
+  */
   public void swerveDrive(Translation2d translation, double rotation, boolean fieldRelative) {
     SwerveModuleState[] swerveModuleStates =
         DriveConstants.KINEMATICS.toSwerveModuleStates(
@@ -129,11 +153,30 @@ public class DriveBase extends SubsystemBase {
     }
 }
 
+/**
+ * Drives the robot robot-relative according to provided {@link ChassisSpeeds}.
+ * 
+ * @param chassisSpeeds The desired ChassisSpeeds. Should be robot relative.
+ */
 public void driveRobotRelative(ChassisSpeeds chassisSpeeds) {
-  SwerveModuleState[] desiredStates = DriveConstants.KINEMATICS.toSwerveModuleStates(chassisSpeeds);
-  this.setModuleStates(desiredStates);
+  setpoint = chassisSpeeds;
 }
 
+/**
+ * Drives the robot field-relative according to provided {@link ChassisSpeeds}.
+ * 
+ * @param chassisSpeeds The desired ChassisSpeeds. Should be robot relative.
+ */
+public void driveFieldRelative(ChassisSpeeds chassisSpeeds) {
+  setpoint = getFieldRelativeChassisSpeeds(chassisSpeeds);
+}
+
+
+/**Sets desired SwerveModuleStates. Optimizes states.
+ * 
+ * @param desiredStates The states to set for each module.
+ * @return The optimized SwerveModuleStates, now desired states.
+ */
 public SwerveModuleState[] setModuleStates(SwerveModuleState[] desiredStates) {
   SwerveModuleState[] optimizedStates = new SwerveModuleState[4];
   SwerveDriveKinematics.desaturateWheelSpeeds(
@@ -144,6 +187,11 @@ public SwerveModuleState[] setModuleStates(SwerveModuleState[] desiredStates) {
   return optimizedStates;
 }
 
+/**Converts robot relative {@link ChassisSpeeds} to field relative.
+ * 
+ * @param robotRelativeSpeeds The robot relative speeds to convert
+ * @return The field relative ChassisSpeeds.
+ */
 public ChassisSpeeds getFieldRelativeChassisSpeeds(ChassisSpeeds robotRelativeSpeeds) {
   Rotation2d angle = new Rotation2d();
   if(Robot.isSimulation()) {
@@ -159,33 +207,37 @@ public ChassisSpeeds getFieldRelativeChassisSpeeds(ChassisSpeeds robotRelativeSp
                   robotRelativeSpeeds.omegaRadiansPerSecond);
 }
 
-public void setChassisSpeeds(ChassisSpeeds chassisSpeeds) {
-  setpoint = getFieldRelativeChassisSpeeds(chassisSpeeds);
-}
-
+/**Sets the {@link IdleMode} of the DriveBase motors.
+ * 
+ * @param mode The braking mode (Coast or Brake) of the swerve module motors.
+ */
 public void setBrakingMode(IdleMode mode) {
   for(SwerveModule module: modules) {
     module.setBrakingMode(mode);
   }
 }
 
+/**Stops all of the modules' motors. */
 public void stopMotors() {
   for(SwerveModule module: modules) {
     module.stop();
   }
 }
 
+/**
+ * @return Whether or not the controller is open loop.
+ */
 public boolean isOpenLoop() {
   return isOpenLoop;
 }
 
+/**Sets whether the controller is open loop. 
+ * 
+ * @param newValue The new boolean to set.
+*/
 public void setIsOpenLoop(boolean newValue) {
   isOpenLoop = newValue;
 }
-
-public ChassisSpeeds getRobotRelativeSpeeds() {
-  return ChassisSpeeds.fromFieldRelativeSpeeds(DriveConstants.KINEMATICS.toChassisSpeeds(getStates()), gyro.getYaw());
-} 
 
   @Override
   public void periodic() {

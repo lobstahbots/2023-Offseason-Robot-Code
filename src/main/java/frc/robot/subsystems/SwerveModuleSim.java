@@ -20,8 +20,7 @@ public class SwerveModuleSim implements SwerveModuleIO {
   private double driveAppliedVolts = 0.0;
   private double turnAppliedVolts = 0.0;
 
-  public SwerveModuleSim() {
-  }
+  public SwerveModuleSim() {}
 
   public void updateInputs(ModuleIOInputs inputs) {
     simDriveMotor.update(SimConstants.LOOP_TIME);
@@ -48,10 +47,18 @@ public class SwerveModuleSim implements SwerveModuleIO {
     inputs.turnCurrentAmps = new double[] { Math.abs(simAngleMotor.getCurrentDrawAmps()) };
   }
 
+  /**Sets voltage of driving motor.
+   * 
+   * @param volts The voltage the motor should be set to.
+   */
   public void setDriveVoltage(double volts) {
     simDriveMotor.setInputVoltage(MathUtil.clamp(volts, -12.0, 12.0));
   }
 
+  /**Sets voltage of turn motor.
+   * 
+   * @param volts The voltage the motor should be set to.
+   */
   public void setTurnVoltage(double volts) {
     simAngleMotor.setInputVoltage(MathUtil.clamp(volts, -12.0, 12.0));
   }

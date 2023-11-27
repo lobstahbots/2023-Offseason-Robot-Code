@@ -9,6 +9,11 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 
 public class TrajectoryFactory {
+    /**Constructs a path following command to generate a path to a target position.
+     * 
+     * @param targetPose The desired end pose of the generated path.
+     * @return The constructed path following command
+     */
     public Command getPathFindToPoseCommand(Pose2d targetPose) {
         // Create the constraints to use while pathfinding
         PathConstraints constraints = new PathConstraints(
@@ -26,6 +31,11 @@ public class TrajectoryFactory {
         return pathfindingCommand;
     }
 
+    /**Constructs a path following command to a preset path from the Pathplanner directory.
+     * 
+     * @param pathname A String containing the name of the file with the path JSON.
+     * @return The constructed path following command
+     */
     public Command getPathFindToPathCommand(String pathname) {
         PathPlannerPath path = PathPlannerPath.fromPathFile(pathname);
 
