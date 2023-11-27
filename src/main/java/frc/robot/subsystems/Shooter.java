@@ -8,6 +8,7 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.ShooterConstants;
 
 public class Shooter extends SubsystemBase {
   /** Creates a new Shooter. */
@@ -21,13 +22,13 @@ public class Shooter extends SubsystemBase {
    * @param mainMotorID      The ID of the main motor controller.
    * @param auxiliaryMotorID The ID of the auxiliary motor controller.
    */
-  public Shooter(int mainMotorID, int auxiliaryMotorID, int currentLimit) {
+  public Shooter(int mainMotorID, int auxiliaryMotorID) {
     this.auxiliaryMotor = new CANSparkMax(auxiliaryMotorID, CANSparkMaxLowLevel.MotorType.kBrushless);
     this.mainMotor = new CANSparkMax(mainMotorID, CANSparkMaxLowLevel.MotorType.kBrushless);
     this.auxiliaryMotor.setIdleMode(CANSparkMax.IdleMode.kBrake);
     this.mainMotor.setIdleMode(CANSparkMax.IdleMode.kBrake);
-    this.auxiliaryMotor.setSmartCurrentLimit(currentLimit);
-    this.mainMotor.setSmartCurrentLimit(currentLimit);
+    this.auxiliaryMotor.setSmartCurrentLimit(ShooterConstants.CURRENT_LIMIT);
+    this.mainMotor.setSmartCurrentLimit(ShooterConstants.CURRENT_LIMIT);
   }
 
   /**

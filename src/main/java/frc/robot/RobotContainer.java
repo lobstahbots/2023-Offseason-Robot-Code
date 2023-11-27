@@ -35,7 +35,7 @@ public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   private final DriveBase driveBase;
 
-  private final Shooter shooter = new Shooter(ShooterConstants.MAIN_MOTOR_ID, ShooterConstants.AUXILIARY_MOTOR_ID, ShooterConstants.MAX_AMPS);
+  private final Shooter shooter = new Shooter(ShooterConstants.MAIN_MOTOR_ID, ShooterConstants.AUXILIARY_MOTOR_ID);
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
   private final Joystick driverJoystick =
