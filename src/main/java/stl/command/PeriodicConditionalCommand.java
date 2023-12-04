@@ -12,7 +12,6 @@ import static edu.wpi.first.util.ErrorMessages.requireNonNullParam;
 
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 
 import java.util.function.BooleanSupplier;
@@ -28,7 +27,7 @@ import java.util.function.BooleanSupplier;
  * <p>
  * This class is provided by the NewCommands VendorDep
  */
-public class PeriodicConditionalCommand extends CommandBase {
+public class PeriodicConditionalCommand extends Command {
   private final Command m_onTrue;
   private final Command m_onFalse;
   private final BooleanSupplier m_condition;

@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.util.Units;
@@ -17,6 +19,10 @@ import edu.wpi.first.math.util.Units;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
+  public static class PathConstants {
+    public static final Pose2d TARGET_POSE = new Pose2d(16, 7, Rotation2d.fromDegrees(180));
+    public static final Pose2d INITIAL_POSE = new Pose2d(0, 0, Rotation2d.fromDegrees(0));
+  }
   public static class OperatorConstants {
     public static final int DRIVER_CONTROLLER_PORT = 0;
     public static final int STRAFE_X_AXIS = 0;
@@ -67,7 +73,7 @@ public final class Constants {
       public static final int driveID = 0;
       public static final int angleID = 0;
       public static final double angleOffset = 0;
-      public static final boolean inverted = true;
+      public static final boolean inverted = false;
     }
     public static class BackRightModuleConstants {
       public static final int moduleID = 3;
@@ -109,6 +115,12 @@ public final class Constants {
   }
 
   public static class SimConstants {
-    public static final double LOOP_TIME = 0.02;
+    public static final double LOOP_TIME = 0.01;
+  }
+
+  public static class ShooterConstants {
+    public static final int AUXILIARY_MOTOR_ID = 0; // NOTE: Replace with real value
+    public static final int MAIN_MOTOR_ID = 0; // See above
+    public static final int CURRENT_LIMIT = 40; // Max current
   }
 }

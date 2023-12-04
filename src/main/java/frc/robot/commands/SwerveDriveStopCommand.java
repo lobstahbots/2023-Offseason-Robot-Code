@@ -4,10 +4,10 @@
 
 package frc.robot.commands;
 
-import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.DriveBase;
 
-public class SwerveDriveStopCommand extends CommandBase {
+public class SwerveDriveStopCommand extends Command {
   /** Creates a new SwerveDriveStopCommand. */
   private final DriveBase driveBase;
   public SwerveDriveStopCommand(DriveBase driveBase) {

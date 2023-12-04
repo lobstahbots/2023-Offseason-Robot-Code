@@ -7,9 +7,8 @@ package stl.command;
 import java.util.function.Supplier;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.CommandBase;
 
-public class ConstructLaterCommand extends CommandBase {
+public class ConstructLaterCommand extends Command {
   private final Supplier<Command> commandSupplier;
   private Command command;
 

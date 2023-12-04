@@ -40,7 +40,7 @@ public class SwerveModuleReal implements SwerveModuleIO {
   private final int moduleID;
   private final ModuleIOInputsAutoLogged inputs = new ModuleIOInputsAutoLogged();
 
-  /** Creates a new SwerveDriveWheel. 
+  /** Creates a new SwerveModule for real cases. 
    * 
    * @param moduleID The module number (0-3).
    * @param angleMotorID The CAN ID of the motor controlling the angle.
@@ -104,11 +104,13 @@ public class SwerveModuleReal implements SwerveModuleIO {
     lastAngle = getState().angle;
   }
 
+  /**Stops the module motors. */
   public void stopMotors() {
     angleMotor.stopMotor();
     driveMotor.stopMotor();
   }
 
+  /**Initializes angle based on initial absolute encoder reading. */
   public void initializeAngle() {
     angleEncoder.setPosition(angleAbsoluteEncoder.getPosition());
   }
@@ -190,10 +192,18 @@ public class SwerveModuleReal implements SwerveModuleIO {
     drivingEncoder.setPosition(0);
   }
 
+  /**Sets voltage of driving motor.
+   * 
+   * @param volts The voltage the motor should be set to.
+   */
   public void setDriveVoltage(double volts) {
     driveMotor.setVoltage(volts);
   }
 
+  /**Sets voltage of turn motor.
+   * 
+   * @param volts The voltage the motor should be set to.
+   */
   public void setTurnVoltage(double volts) {
     angleMotor.setVoltage(volts);
   }
@@ -213,7 +223,7 @@ public class SwerveModuleReal implements SwerveModuleIO {
   }
 
   public void periodic() {
-    Logger.getInstance().processInputs("Drive/Module" + Integer.toString(moduleID), inputs);
+    Logger.processInputs("Drive/Module" + Integer.toString(moduleID), inputs);
   }
 
 }

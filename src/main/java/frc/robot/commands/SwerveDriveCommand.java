@@ -6,13 +6,12 @@ package frc.robot.commands;
 
 import java.util.function.DoubleSupplier;
 
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.DriveBase;
 
 /** An example command that uses an example subsystem. */
-public class SwerveDriveCommand extends CommandBase {
+public class SwerveDriveCommand extends Command {
   private final DriveBase driveBase;
   private final DoubleSupplier strafeXSupplier;
   private final DoubleSupplier strafeYSupplier;
@@ -35,7 +34,7 @@ public class SwerveDriveCommand extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    driveBase.setChassisSpeeds(new ChassisSpeeds(strafeXSupplier.getAsDouble(), strafeYSupplier.getAsDouble(), rotationSupplier.getAsDouble()));
+    driveBase.driveFieldRelative(new ChassisSpeeds(strafeXSupplier.getAsDouble(), strafeYSupplier.getAsDouble(), rotationSupplier.getAsDouble()));
   }
 
   // Returns true when the command should end.

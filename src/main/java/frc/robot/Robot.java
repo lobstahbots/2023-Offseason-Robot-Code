@@ -7,12 +7,12 @@ package frc.robot;
 
 import java.io.File;
 
-import org.littletonrobotics.junction.LogFileUtil;
 import org.littletonrobotics.junction.LoggedRobot;
 import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.NT4Publisher;
-import org.littletonrobotics.junction.wpilog.WPILOGReader;
 import org.littletonrobotics.junction.wpilog.WPILOGWriter;
+
+import com.pathplanner.lib.pathfinding.Pathfinding;
 
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -35,30 +35,28 @@ public class Robot extends LoggedRobot {
    */
   @Override
   public void robotInit() {
-
-    Logger logger = Logger.getInstance();
-
+    Pathfinding.setPathfinder(new LocalADStarAK());
     // Record metadata
-    logger.recordMetadata("ProjectName", BuildConstants.MAVEN_NAME);
-    logger.recordMetadata("BuildDate", BuildConstants.BUILD_DATE);
-    logger.recordMetadata("GitSHA", BuildConstants.GIT_SHA);
-    logger.recordMetadata("GitDate", BuildConstants.GIT_DATE);
-    logger.recordMetadata("GitBranch", BuildConstants.GIT_BRANCH);
-    logger.recordMetadata("Lobstah Bots", "2023 Swerve Offseason");
+    Logger.recordMetadata("ProjectName", BuildConstants.MAVEN_NAME);
+    Logger.recordMetadata("BuildDate", BuildConstants.BUILD_DATE);
+    Logger.recordMetadata("GitSHA", BuildConstants.GIT_SHA);
+    Logger.recordMetadata("GitDate", BuildConstants.GIT_DATE);
+    Logger.recordMetadata("GitBranch", BuildConstants.GIT_BRANCH);
+    Logger.recordMetadata("Lobstah Bots", "2023 Swerve Offseason");
     if (Robot.isReal()) {
-      logger.addDataReceiver(new WPILOGWriter("/U")); // Log to a USB stick
-      logger.addDataReceiver(new NT4Publisher()); // Publish data to NetworkTables
+      Logger.addDataReceiver(new WPILOGWriter("/U")); // Log to a USB stick
+      Logger.addDataReceiver(new NT4Publisher()); // Publish data to NetworkTables
   } else {
       setUseTiming(false); // Run as fast as possible
       File log = new File (Filesystem.getOperatingDirectory(), "log");
       String logPath = log.getAbsolutePath();
       // System.out.println(logPath);
       // logger.setReplaySource(new WPILOGReader(logPath)); // Read replay log
-      logger.addDataReceiver(new WPILOGWriter(logPath)); // Save outputs to a new log
+      Logger.addDataReceiver(new WPILOGWriter(logPath)); // Save outputs to a new log
   }
   
   // Logger.getInstance().disableDeterministicTimestamps() // See "Deterministic Timestamps" in the "Understanding Data Flow" page
-   logger.start();
+   Logger.start();
 
     m_robotContainer = new RobotContainer();
   }

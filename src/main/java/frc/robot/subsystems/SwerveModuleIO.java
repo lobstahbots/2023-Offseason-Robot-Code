@@ -35,8 +35,10 @@ public interface SwerveModuleIO {
   /** Run the turn motor at the specified voltage. */
   public default void setTurnVoltage(double volts) {}
 
+  /** Set the angle to the angle specified in the module state. */
   public default void setAngle(SwerveModuleState optimizedDesiredState){}
 
+  /** Set the drive speed to the angle specified in the module state. */
   public default void setDriveSpeed(SwerveModuleState optimizedDesiredState, boolean isOpenLoop){}
 
   /** Enable or disable brake mode on the drive motor. */
