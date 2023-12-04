@@ -11,34 +11,43 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Intake extends SubsystemBase {
-  private final CANSparkMax spinner;
+  private final CANSparkMax roller;
   private final CANSparkMax mover;
 
 
   /** Creates a new Intake. */
-  public Intake(int spinnerID, int moverID) {
-    this.spinner = new CANSparkMax(spinnerID, MotorType.kBrushless);
+  public Intake(int rollerID, int moverID) {
+    this.roller = new CANSparkMax(rollerID, MotorType.kBrushless);
     this.mover = new CANSparkMax(moverID, MotorType.kBrushless);
-    this.spinner.setIdleMode(IdleMode.kBrake);
+    this.roller.setIdleMode(IdleMode.kBrake);
     this.mover.setIdleMode(IdleMode.kBrake);
-    this.spinner.setInverted(true);
+    this.roller.setInverted(true);
     this.mover.setInverted(false);
   }
   /**
-   * 
+   * Sets the spin speed of the intake rollers.
+   * @param rollerSpeed The speed to spin them at.
    */
-  public void setSpinnerSpeed(double spinnerSpeed) {
-    spinner.set(spinnerSpeed);
+  public void setRollerSpeed(double rollerSpeed) {
+    roller.set(rollerSpeed);
   }
 
+  /**
+   * Sets the speed of the intake mover motor.
+   * @param moverSpeed The speed for the mover to move with.
+   */
   public void setMoverSpeed(double moverSpeed) {
-    spinner.set(moverSpeed);
+    roller.set(moverSpeed);
   }
 
-  public void stopSpinner() {
-    spinner.stopMotor();
+  /**
+   * Stops the roller motor.
+   */
+  public void stopRoller() {
+    roller.stopMotor();
   }
 
+  /**Stops the mover motor. */
   public void stopMover() {
     mover.stopMotor();
   }
