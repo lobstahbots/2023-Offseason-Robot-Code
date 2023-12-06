@@ -61,7 +61,7 @@ public class SwerveModuleReal implements SwerveModuleIO {
     driveMotor.setSmartCurrentLimit(DriveConstants.DRIVE_MOTOR_CURRENT_LIMIT);
     angleMotor.setSmartCurrentLimit(DriveConstants.ANGLE_MOTOR_CURRENT_LIMIT);
 
-    driveMotor.setInverted(inverted);
+    angleMotor.setInverted(inverted);
 
     driveController = this.driveMotor.getPIDController();
     angleController = this.angleMotor.getPIDController();
@@ -74,8 +74,8 @@ public class SwerveModuleReal implements SwerveModuleIO {
     angleEncoder.setVelocityConversionFactor(SwerveConstants.TURNING_ENCODER_VELOCITY_CONVERSION_FACTOR);
     driveController.setFeedbackDevice(drivingEncoder);
     angleController.setFeedbackDevice(angleEncoder);
-    angleAbsoluteEncoder.setInverted(true);
-    // angleEncoder.setInverted(true);
+    angleAbsoluteEncoder.setInverted(inverted);
+    angleEncoder.setInverted(inverted);
 
     angleController.setPositionPIDWrappingEnabled(true);
     angleController.setPositionPIDWrappingMinInput(SwerveConstants.TURN_PID_MIN_INPUT);
@@ -87,7 +87,12 @@ public class SwerveModuleReal implements SwerveModuleIO {
     driveController.setFF(SwerveConstants.DRIVE_PID_FF);
     driveController.setOutputRange(SwerveConstants.DRIVE_PID_MIN_OUTPUT, SwerveConstants.DRIVE_PID_MAX_OUTPUT);
 
-    angleController.setP(SwerveConstants.TURN_PID_P);
+    if(inverted) {
+      angleController.setP(-SwerveConstants.TURN_PID_P);
+    } else {
+      angleController.setP(SwerveConstants.TURN_PID_P);
+    }
+    
     angleController.setI(SwerveConstants.TURN_PID_I);
     angleController.setD(SwerveConstants.TURN_PID_D);
     angleController.setFF(SwerveConstants.TURN_PID_FF);
