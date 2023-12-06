@@ -51,7 +51,8 @@ public class RobotContainer {
       SwerveModuleReal backRight = new SwerveModuleReal(BackRightModuleConstants.moduleID, BackRightModuleConstants.angleID, BackRightModuleConstants.driveID, BackRightModuleConstants.angleOffset, BackRightModuleConstants.inverted);
   
       driveBase = new DriveBase(new NavXGyro(), frontLeft, frontRight, backRight, backLeft, false);
-    } else {
+    } 
+    else {
       SwerveModuleSim frontLeft = new SwerveModuleSim();
       SwerveModuleSim frontRight = new SwerveModuleSim();
       SwerveModuleSim backLeft = new SwerveModuleSim();
@@ -66,8 +67,8 @@ public class RobotContainer {
   private void setTeleopDefaultCommands() {
     driveBase.setDefaultCommand(
       new SwerveDriveCommand(driveBase,
-          () -> -driverJoystick.getRawAxis(OperatorConstants.STRAFE_X_AXIS),
-          () -> -driverJoystick.getRawAxis(OperatorConstants.STRAFE_Y_AXIS),
+          () -> -0.1 * driverJoystick.getRawAxis(OperatorConstants.STRAFE_X_AXIS),
+          () -> -0.1 * driverJoystick.getRawAxis(OperatorConstants.STRAFE_Y_AXIS),
           () -> -driverJoystick.getRawAxis(OperatorConstants.ROTATION_AXIS),
           DriveConstants.FIELD_CENTRIC));
   }

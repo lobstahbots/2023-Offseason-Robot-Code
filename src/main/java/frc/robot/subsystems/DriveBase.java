@@ -168,9 +168,10 @@ public void driveRobotRelative(ChassisSpeeds chassisSpeeds) {
  * @param chassisSpeeds The desired ChassisSpeeds. Should be robot relative.
  */
 public void driveFieldRelative(ChassisSpeeds chassisSpeeds) {
-  setpoint = getFieldRelativeChassisSpeeds(chassisSpeeds);
+    SwerveModuleState[] newStates = DriveConstants.KINEMATICS.toSwerveModuleStates(getFieldRelativeChassisSpeeds(chassisSpeeds));
+      SwerveDriveKinematics.desaturateWheelSpeeds(newStates, DriveConstants.MAX_DRIVE_SPEED);
+      setModuleStates(newStates);
 }
-
 
 /**Sets desired SwerveModuleStates. Optimizes states.
  * 
@@ -182,7 +183,7 @@ public SwerveModuleState[] setModuleStates(SwerveModuleState[] desiredStates) {
   SwerveDriveKinematics.desaturateWheelSpeeds(
       desiredStates, DriveConstants.MAX_DRIVE_SPEED);
   for(SwerveModule module: modules) {
-    optimizedStates[module.getModuleID()] = module.setDesiredState(desiredStates[module.getModuleID()], isOpenLoop);
+    module.setDesiredState(desiredStates[module.getModuleID()], isOpenLoop);
   }
   return optimizedStates;
 }
@@ -241,87 +242,91 @@ public void setIsOpenLoop(boolean newValue) {
 
   @Override
   public void periodic() {
-    if(Robot.isSimulation()) {
-      var twist = DriveConstants.KINEMATICS.toTwist2d(getPositions());
-      simRotation = Rotation2d.fromDegrees(twist.dtheta);
-      SmartDashboard.putNumber("Twist Theta", twist.dtheta);
-      swerveOdometry.update(simRotation, getPositions());
-    } else {
-      swerveOdometry.update(gyro.getYaw(), getPositions());
-    }
-    field.setRobotPose(getPose());
-    SmartDashboard.putString("Pose", getPose().toString());
-    Logger.recordOutput("Odometry", getPose());
-    gyroIO.updateInputs(gyroInputs);
-    Logger.processInputs("Drive/Gyro", gyroInputs);
+    // if(Robot.isSimulation()) {
+    //   var twist = DriveConstants.KINEMATICS.toTwist2d(getPositions());
+    //   simRotation = Rotation2d.fromDegrees(twist.dtheta);
+    //   SmartDashboard.putNumber("Twist Theta", twist.dtheta);
+    //   swerveOdometry.update(simRotation, getPositions());
+    // } else {
+    //   swerveOdometry.update(gyro.getYaw(), getPositions());
+    // }
+    // field.setRobotPose(getPose());
+    // SmartDashboard.putString("Pose", getPose().toString());
+    // Logger.recordOutput("Odometry", getPose());
+    // gyroIO.updateInputs(gyroInputs);
+    // Logger.processInputs("Drive/Gyro", gyroInputs);
     for (SwerveModule module : modules) {
       module.periodic();
     }
 
-    if (DriverStation.isDisabled()) {
-      // Stop moving while disabled
-      for (var module : modules) {
-        module.stop();
-      }
+    // if (DriverStation.isDisabled()) {
+    //   // Stop moving while disabled
+    //   for (var module : modules) {
+    //     module.stop();
+    //   }
 
-      // Clear setpoint logs
-      Logger.recordOutput("SwerveStates/Desired", new double[] {});
+    //   // Clear setpoint logs
+    //   Logger.recordOutput("SwerveStates/Desired", new double[] {});
 
-    } 
-    else {
-      Twist2d setpointTwist =
-          new Pose2d()
-              .log(
-                  new Pose2d(
-                      setpoint.vxMetersPerSecond * SimConstants.LOOP_TIME,
-                      setpoint.vyMetersPerSecond * SimConstants.LOOP_TIME,
-                      new Rotation2d(setpoint.omegaRadiansPerSecond * SimConstants.LOOP_TIME)));
+    // } 
+    // else {
+    //   Twist2d setpointTwist =
+    //       new Pose2d()
+    //           .log(
+    //               new Pose2d(
+    //                   setpoint.vxMetersPerSecond * SimConstants.LOOP_TIME,
+    //                   setpoint.vyMetersPerSecond * SimConstants.LOOP_TIME,
+    //                   new Rotation2d(setpoint.omegaRadiansPerSecond * SimConstants.LOOP_TIME)));
 
-      ChassisSpeeds adjustedSpeeds =
-          new ChassisSpeeds(
-              setpointTwist.dx / SimConstants.LOOP_TIME,
-              setpointTwist.dy / SimConstants.LOOP_TIME,
-              setpointTwist.dtheta / SimConstants.LOOP_TIME);
-      SwerveModuleState[] newStates = DriveConstants.KINEMATICS.toSwerveModuleStates(adjustedSpeeds);
-      SwerveDriveKinematics.desaturateWheelSpeeds(newStates, DriveConstants.MAX_DRIVE_SPEED);
+    //   ChassisSpeeds adjustedSpeeds =
+    //       new ChassisSpeeds(
+    //           setpointTwist.dx / SimConstants.LOOP_TIME,
+    //           setpointTwist.dy / SimConstants.LOOP_TIME,
+    //           setpointTwist.dtheta / SimConstants.LOOP_TIME);
+    //   SwerveModuleState[] newStates = DriveConstants.KINEMATICS.toSwerveModuleStates(adjustedSpeeds);
+    //   SwerveDriveKinematics.desaturateWheelSpeeds(newStates, DriveConstants.MAX_DRIVE_SPEED);
 
-      // Set to last angles if zero
-      if (adjustedSpeeds.vxMetersPerSecond == 0.0
-          && adjustedSpeeds.vyMetersPerSecond == 0.0
-          && adjustedSpeeds.omegaRadiansPerSecond == 0) {
-        for (int i = 0; i < 4; i++) {
-          newStates[i] = new SwerveModuleState(0.0, states[i].angle);
-        }
-      }
+    //   // // Set to last angles if zero
+    //   // if (adjustedSpeeds.vxMetersPerSecond == 0.0
+    //   //     && adjustedSpeeds.vyMetersPerSecond == 0.0
+    //   //     && adjustedSpeeds.omegaRadiansPerSecond == 0) {
+    //   //   for (int i = 0; i < 4; i++) {
+    //   //     newStates[i] = new SwerveModuleState(0.0, states[i].angle);
+    //   //   }
+    //   // }
 
-      states = newStates;
+    //   for(int j = 0; j < 4; j++) {
+    //     SmartDashboard.putNumber("Desired angle" + j, newStates[j].angle.getDegrees());
+    //   }
+    //   states = newStates;
       
-    Logger.recordOutput("SwerveStates/Desired", setModuleStates(newStates));
-    Logger.recordOutput("SwerveStates/Measured", getStates());
-    Logger.recordOutput("Odometry/Robot", getPose());
+    // // Logger.recordOutput("SwerveStates/Desired", setModuleStates(newStates));
+    // // setModuleStates(newStates);
+    // Logger.recordOutput("SwerveStates/Measured", getStates());
+    // Logger.recordOutput("Odometry/Robot", getPose());
     
-    // Log 3D odometry pose
-    Pose3d robotPose3d = new Pose3d(getPose());
-    robotPose3d =
-        robotPose3d
-            .exp(
-                new Twist3d(
-                    0.0,
-                    0.0,
-                    Math.abs(gyroInputs.pitchPositionRad) * RobotConstants.TRACK_WIDTH / 2.0,
-                    0.0,
-                    gyroInputs.pitchPositionRad,
-                    0.0))
-            .exp(
-                new Twist3d(
-                    0.0,
-                    0.0,
-                    Math.abs(gyroInputs.rollPositionRad) * RobotConstants.TRACK_WIDTH / 2.0,
-                    gyroInputs.rollPositionRad,
-                    0.0,
-                    0.0));
+    // // Log 3D odometry pose
+    // Pose3d robotPose3d = new Pose3d(getPose());
+    // robotPose3d =
+    //     robotPose3d
+    //         .exp(
+    //             new Twist3d(
+    //                 0.0,
+    //                 0.0,
+    //                 Math.abs(gyroInputs.pitchPositionRad) * RobotConstants.TRACK_WIDTH / 2.0,
+    //                 0.0,
+    //                 gyroInputs.pitchPositionRad,
+    //                 0.0))
+    //         .exp(
+    //             new Twist3d(
+    //                 0.0,
+    //                 0.0,
+    //                 Math.abs(gyroInputs.rollPositionRad) * RobotConstants.TRACK_WIDTH / 2.0,
+    //                 gyroInputs.rollPositionRad,
+    //                 0.0,
+    //                 0.0));
 
-    Logger.recordOutput("Odometry/Robot3d", robotPose3d);
-    }
+    // Logger.recordOutput("Odometry/Robot3d", robotPose3d);
+    // }
   }
 }

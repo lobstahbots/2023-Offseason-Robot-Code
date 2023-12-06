@@ -14,6 +14,7 @@ import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Robot;
 import frc.robot.Constants.RobotConstants;
 import frc.robot.Constants.SwerveConstants;
@@ -61,6 +62,7 @@ public class SwerveModule {
   public void periodic() {
     io.updateInputs(inputs);
     Logger.processInputs("Drive/Module" + Integer.toString(moduleID), inputs);
+    System.out.println(inputs.turnAbsolutePositionRad);
   }
 
   /**
@@ -76,9 +78,22 @@ public class SwerveModule {
     SwerveModuleState optimizedDesiredState = SwerveModuleState.optimize(correctedDesiredState,
         new Rotation2d(inputs.turnPositionRad));
 
+    System.out.println("Desired turn" + inputs.turnPositionRad);
+
     if (Robot.isReal()) {
-      io.setDriveSpeed(optimizedDesiredState, isOpenLoop);
-      io.setAngle(optimizedDesiredState);
+      // io.setDriveSpeed(optimizedDesiredState, isOpenLoop);
+      // io.setAngle(optimizedDesiredState);
+      io.setTurnVoltage(
+          angleController.calculate(getAngle().getRadians(), optimizedDesiredState.angle.getRadians()));
+
+      // Update velocity based on turn error
+      optimizedDesiredState.speedMetersPerSecond *= Math.cos(angleController.getPositionError());
+
+      // Run drive controller
+      double velocityRadPerSec = optimizedDesiredState.speedMetersPerSecond / (RobotConstants.WHEEL_DIAMETER / 2);
+      io.setDriveVoltage(
+          feedforward.calculate(velocityRadPerSec)
+              + driveController.calculate(inputs.driveVelocityRadPerSec, velocityRadPerSec));
     } else {
       io.setTurnVoltage(
           angleController.calculate(getAngle().getRadians(), optimizedDesiredState.angle.getRadians()));
