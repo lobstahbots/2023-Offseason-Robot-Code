@@ -20,6 +20,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.SwerveConstants;
 
@@ -74,7 +75,7 @@ public class SwerveModuleReal implements SwerveModuleIO {
     driveController.setFeedbackDevice(drivingEncoder);
     angleController.setFeedbackDevice(angleEncoder);
     angleAbsoluteEncoder.setInverted(true);
-    angleEncoder.setInverted(true);
+    // angleEncoder.setInverted(true);
 
     angleController.setPositionPIDWrappingEnabled(true);
     angleController.setPositionPIDWrappingMinInput(SwerveConstants.TURN_PID_MIN_INPUT);
@@ -224,6 +225,7 @@ public class SwerveModuleReal implements SwerveModuleIO {
 
   public void periodic() {
     Logger.processInputs("Drive/Module" + Integer.toString(moduleID), inputs);
+    SmartDashboard.putNumber("Angle" + moduleID, angleEncoder.getPosition());
   }
 
 }
