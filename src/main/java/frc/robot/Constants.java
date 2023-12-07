@@ -61,14 +61,14 @@ public final class Constants {
       public static final int moduleID = 0;
       public static final int driveID = 12;
       public static final int angleID = 13;
-      public static final double angleOffset = 0;
+      public static final double angleOffset = -90;
       public static final boolean inverted = false;
     }
     public static class BackLeftModuleConstants {
       public static final int moduleID = 1;
       public static final int driveID = 16;
       public static final int angleID = 17;
-      public static final double angleOffset = 0;
+      public static final double angleOffset = 180;
       public static final boolean inverted = false;
     }
     public static class FrontRightModuleConstants {
@@ -82,7 +82,7 @@ public final class Constants {
       public static final int moduleID = 3;
       public static final int driveID = 10;
       public static final int angleID = 11;
-      public static final double angleOffset = 0;
+      public static final double angleOffset = 90;
       public static final boolean inverted = false;
     }
   }

@@ -67,8 +67,8 @@ public class RobotContainer {
   private void setTeleopDefaultCommands() {
     driveBase.setDefaultCommand(
       new SwerveDriveCommand(driveBase,
-          () -> -0.1 * driverJoystick.getRawAxis(IOConstants.STRAFE_X_AXIS),
-          () -> -0.1 * driverJoystick.getRawAxis(IOConstants.STRAFE_Y_AXIS),
+          () -> -driverJoystick.getRawAxis(IOConstants.STRAFE_X_AXIS),
+          () -> -driverJoystick.getRawAxis(IOConstants.STRAFE_Y_AXIS),
           () -> -driverJoystick.getRawAxis(IOConstants.ROTATION_AXIS),
           DriveConstants.FIELD_CENTRIC));
   }
