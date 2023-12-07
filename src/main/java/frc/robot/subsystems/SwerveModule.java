@@ -62,7 +62,6 @@ public class SwerveModule {
   public void periodic() {
     io.updateInputs(inputs);
     Logger.processInputs("Drive/Module" + Integer.toString(moduleID), inputs);
-    System.out.println(inputs.turnAbsolutePositionRad);
   }
 
   /**
@@ -71,16 +70,12 @@ public class SwerveModule {
    * @param desiredState A {@link SwerveModuleState} with desired speed and angle.
    */
   public SwerveModuleState setDesiredState(SwerveModuleState desiredState, boolean isOpenLoop) {
-    SwerveModuleState correctedDesiredState = new SwerveModuleState();
-    correctedDesiredState.speedMetersPerSecond = desiredState.speedMetersPerSecond;
-    correctedDesiredState.angle = desiredState.angle.plus(inputs.angularOffset);
 
-    SwerveModuleState optimizedDesiredState = SwerveModuleState.optimize(correctedDesiredState,
-        new Rotation2d(inputs.turnPositionRad));
+    SwerveModuleState optimizedDesiredState = SwerveModuleState.optimize(desiredState,
+      inputs.turnPosition);
 
-    System.out.println("Desired turn" + inputs.turnPositionRad);
+    System.out.println("turn" + inputs.turnPosition.getDegrees());
 
-    if (Robot.isReal()) {
       // io.setDriveSpeed(optimizedDesiredState, isOpenLoop);
       // io.setAngle(optimizedDesiredState);
       io.setTurnVoltage(
@@ -94,19 +89,6 @@ public class SwerveModule {
       io.setDriveVoltage(
           feedforward.calculate(velocityRadPerSec)
               + driveController.calculate(inputs.driveVelocityRadPerSec, velocityRadPerSec));
-    } else {
-      io.setTurnVoltage(
-          angleController.calculate(getAngle().getRadians(), optimizedDesiredState.angle.getRadians()));
-
-      // Update velocity based on turn error
-      optimizedDesiredState.speedMetersPerSecond *= Math.cos(angleController.getPositionError());
-
-      // Run drive controller
-      double velocityRadPerSec = optimizedDesiredState.speedMetersPerSecond / (RobotConstants.WHEEL_DIAMETER / 2);
-      io.setDriveVoltage(
-          feedforward.calculate(velocityRadPerSec)
-              + driveController.calculate(inputs.driveVelocityRadPerSec, velocityRadPerSec));
-    }
 
     return optimizedDesiredState;
   }
@@ -119,12 +101,13 @@ public class SwerveModule {
 
   /** Returns the current turn angle of the module. */
   public Rotation2d getAngle() {
-    return new Rotation2d(MathUtil.angleModulus(inputs.turnPositionRad));
+    return new Rotation2d(MathUtil.angleModulus(inputs.turnPosition.getRadians()));
   }
 
   /** Returns the current drive position of the module in meters. */
   public double getPositionMeters() {
-    return inputs.drivePositionRad * RobotConstants.WHEEL_DIAMETER / 2;
+    System.out.println("pos" + inputs.drivePosition.getRadians());
+    return inputs.drivePosition.getRadians() * RobotConstants.WHEEL_DIAMETER / 2;
   }
 
   /** Returns the current drive velocity of the module in meters per second. */

@@ -22,13 +22,14 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.DriveConstants;
+import frc.robot.Constants.RobotConstants;
 import frc.robot.Constants.SwerveConstants;
 
 public class SwerveModuleReal implements SwerveModuleIO {
   private final CANSparkMax angleMotor;
   private final CANSparkMax driveMotor;
   private final RelativeEncoder drivingEncoder;
-  // private final AbsoluteEncoder angleAbsoluteEncoder;
+  private final AbsoluteEncoder angleAbsoluteEncoder;
   private final RelativeEncoder angleEncoder;
   private final SparkMaxPIDController driveController;
   private final SparkMaxPIDController angleController;
@@ -60,18 +61,16 @@ public class SwerveModuleReal implements SwerveModuleIO {
     angleMotor.setIdleMode(IdleMode.kBrake);
     driveMotor.setSmartCurrentLimit(DriveConstants.DRIVE_MOTOR_CURRENT_LIMIT);
     angleMotor.setSmartCurrentLimit(DriveConstants.ANGLE_MOTOR_CURRENT_LIMIT);
+    driveMotor.enableVoltageCompensation(12.0);
+    angleMotor.enableVoltageCompensation(12.0);
 
     angleMotor.setInverted(inverted);
 
     driveController = this.driveMotor.getPIDController();
     angleController = this.angleMotor.getPIDController();
     drivingEncoder = driveMotor.getEncoder();
-    // angleAbsoluteEncoder = angleMotor.getAbsoluteEncoder(Type.kDutyCycle);
+    angleAbsoluteEncoder = angleMotor.getAbsoluteEncoder(Type.kDutyCycle);
     angleEncoder = angleMotor.getEncoder();
-    drivingEncoder.setPositionConversionFactor(SwerveConstants.DRIVING_ENCODER_POSITION_CONVERSION_FACTOR);
-    drivingEncoder.setVelocityConversionFactor(SwerveConstants.DRIVING_ENCODER_VELOCITY_CONVERSION_FACTOR);
-    angleEncoder.setPositionConversionFactor(SwerveConstants.TURNING_ENCODER_POSITION_CONVERSION_FACTOR);
-    angleEncoder.setVelocityConversionFactor(SwerveConstants.TURNING_ENCODER_VELOCITY_CONVERSION_FACTOR);
     driveController.setFeedbackDevice(drivingEncoder);
     angleController.setFeedbackDevice(angleEncoder);
     // angleAbsoluteEncoder.setInverted(inverted);
@@ -87,11 +86,11 @@ public class SwerveModuleReal implements SwerveModuleIO {
     driveController.setFF(SwerveConstants.DRIVE_PID_FF);
     driveController.setOutputRange(SwerveConstants.DRIVE_PID_MIN_OUTPUT, SwerveConstants.DRIVE_PID_MAX_OUTPUT);
 
-    if(inverted) {
-      angleController.setP(-SwerveConstants.TURN_PID_P);
-    } else {
-      angleController.setP(SwerveConstants.TURN_PID_P);
-    }
+    // if(inverted) {
+    //   angleController.setP(-SwerveConstants.TURN_PID_P);
+    // } else {
+    //   angleController.setP(SwerveConstants.TURN_PID_P);
+    // }
     
     angleController.setI(SwerveConstants.TURN_PID_I);
     angleController.setD(SwerveConstants.TURN_PID_D);
@@ -102,7 +101,7 @@ public class SwerveModuleReal implements SwerveModuleIO {
     driveMotor.burnFlash();
     angleMotor.burnFlash();
     
-    angleEncoder.setPosition(0);
+    angleEncoder.setPosition(angleAbsoluteEncoder.getPosition());
     this.angularOffset = Rotation2d.fromDegrees(angularOffsetDegrees);
     this.desiredState.angle = new Rotation2d(angleEncoder.getPosition());
     drivingEncoder.setPosition(0);
@@ -226,14 +225,14 @@ public class SwerveModuleReal implements SwerveModuleIO {
   }
 
   public void updateInputs(ModuleIOInputs inputs) {
-    inputs.drivePositionRad = drivingEncoder.getPosition();
-    inputs.driveVelocityRadPerSec = Units.rotationsToRadians(angleEncoder.getVelocity() / SwerveConstants.DRIVING_ENCODER_VELOCITY_CONVERSION_FACTOR);
+    inputs.drivePosition = Rotation2d.fromRotations(drivingEncoder.getPosition()).div(RobotConstants.DRIVE_GEAR_RATIO);
+    inputs.driveVelocityRadPerSec = Units.rotationsToRadians(angleEncoder.getVelocity() / 60);
     inputs.driveAppliedVolts = driveMotor.getAppliedOutput() * driveMotor.getBusVoltage();
     inputs.driveCurrentAmps = new double[] {driveMotor.getOutputCurrent()};
 
-    inputs.turnPositionRad = Units.rotationsToRadians(angleEncoder.getPosition());
-    inputs.turnAbsolutePositionRad = Units.rotationsToRadians(angleEncoder.getPosition());
-    inputs.turnVelocityRadPerSec = Units.rotationsToRadians(angleEncoder.getVelocity() / SwerveConstants.DRIVING_ENCODER_VELOCITY_CONVERSION_FACTOR);
+    inputs.turnPosition = Rotation2d.fromRotations(angleEncoder.getPosition()).div(RobotConstants.ANGLE_GEAR_RATIO);
+    inputs.turnAbsolutePosition = Rotation2d.fromRotations(angleEncoder.getPosition()).div(RobotConstants.ANGLE_GEAR_RATIO);
+    inputs.turnVelocityRadPerSec = Units.rotationsToRadians(angleEncoder.getVelocity() / 60);
     inputs.turnAppliedVolts = angleMotor.getAppliedOutput() * angleMotor.getBusVoltage();
     inputs.turnCurrentAmps = new double[] {angleMotor.getOutputCurrent()};
     inputs.angularOffset = angularOffset;

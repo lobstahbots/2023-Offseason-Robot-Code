@@ -23,30 +23,33 @@ public final class Constants {
     public static final Pose2d TARGET_POSE = new Pose2d(16, 7, Rotation2d.fromDegrees(180));
     public static final Pose2d INITIAL_POSE = new Pose2d(0, 0, Rotation2d.fromDegrees(0));
   }
-  public static class OperatorConstants {
+  public static class IOConstants {
     public static final int DRIVER_CONTROLLER_PORT = 0;
     public static final int STRAFE_X_AXIS = 0;
     public static final int STRAFE_Y_AXIS = 1;
     public static final int ROTATION_AXIS = 2;
+    public static final double JOYSTICK_DEADBAND = 0.1;
   }
   public static class RobotConstants {
-    public static final double TRACK_WIDTH = Units.inchesToMeters(20);
     public static final double WHEELBASE = Units.inchesToMeters(20);
+    public static final double TRACK_WIDTH = Units.inchesToMeters(20);
+    public static final double RADIUS = Units.inchesToMeters(new Translation2d(20, 20).getNorm());
     public static final double WHEEL_DIAMETER = Units.inchesToMeters(3);
     public static final double DRIVE_GEAR_RATIO = 4.71;
     public static final double ANGLE_GEAR_RATIO = 6.1;
   }
   public static class DriveConstants {
     public static final double MAX_VOLTS = 4.95;
-    public static final double MAX_ACCELERATION = 0.1;
-    public static final double MAX_DRIVE_SPEED = 0.1;
-    public static final int DRIVE_MOTOR_CURRENT_LIMIT = 80;
-    public static final int ANGLE_MOTOR_CURRENT_LIMIT = 60;
+    public static final double MAX_ACCELERATION = 4;
+    public static final double MAX_DRIVE_SPEED = 5;
+    public static final double MAX_ANGULAR_SPEED = MAX_DRIVE_SPEED / RobotConstants.RADIUS;
+    public static final int DRIVE_MOTOR_CURRENT_LIMIT = 40;
+    public static final int ANGLE_MOTOR_CURRENT_LIMIT = 40;
     public static final SwerveDriveKinematics KINEMATICS = new SwerveDriveKinematics(
-      new Translation2d(RobotConstants.WHEELBASE / 2.0, RobotConstants.TRACK_WIDTH / 2.0),
-      new Translation2d(RobotConstants.WHEELBASE / 2.0, -RobotConstants.TRACK_WIDTH / 2.0),
       new Translation2d(-RobotConstants.WHEELBASE / 2.0, RobotConstants.TRACK_WIDTH / 2.0),
-      new Translation2d(-RobotConstants.WHEELBASE / 2.0, -RobotConstants.TRACK_WIDTH / 2.0));
+      new Translation2d(RobotConstants.WHEELBASE / 2.0, RobotConstants.TRACK_WIDTH / 2.0),
+      new Translation2d(-RobotConstants.WHEELBASE / 2.0, -RobotConstants.TRACK_WIDTH / 2.0),
+      new Translation2d(RobotConstants.WHEELBASE / 2.0, -RobotConstants.TRACK_WIDTH / 2.0));
 
     public static final boolean FIELD_CENTRIC = true;
     public static final boolean IS_OPEN_LOOP = false;
@@ -93,7 +96,7 @@ public final class Constants {
 
     public static final double DRIVING_ENCODER_POSITION_CONVERSION_FACTOR = (RobotConstants.WHEEL_DIAMETER * Math.PI) / (RobotConstants.DRIVE_GEAR_RATIO);
     public static final double DRIVING_ENCODER_VELOCITY_CONVERSION_FACTOR = DRIVING_ENCODER_POSITION_CONVERSION_FACTOR / 60.0;
-    public static final double TURNING_ENCODER_POSITION_CONVERSION_FACTOR = (2 * Math.PI)/360;
+    public static final double TURNING_ENCODER_POSITION_CONVERSION_FACTOR = (2 * Math.PI) / RobotConstants.ANGLE_GEAR_RATIO;
     public static final double TURNING_ENCODER_VELOCITY_CONVERSION_FACTOR = TURNING_ENCODER_POSITION_CONVERSION_FACTOR / 60.0;
 
     public static final double TURN_PID_MIN_INPUT = 0;
@@ -115,7 +118,7 @@ public final class Constants {
   }
 
   public static class SimConstants {
-    public static final double LOOP_TIME = 0.02;
+    public static final double LOOP_TIME = 0.01;
   }
 
   public static class ShooterConstants {

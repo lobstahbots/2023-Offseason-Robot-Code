@@ -5,7 +5,7 @@
 package frc.robot;
 
 import frc.robot.Constants.DriveConstants;
-import frc.robot.Constants.OperatorConstants;
+import frc.robot.Constants.IOConstants;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.Constants.PathConstants;
 import frc.robot.Constants.DriveConstants.BackLeftModuleConstants;
@@ -38,7 +38,7 @@ public class RobotContainer {
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
   private final Joystick driverJoystick =
-      new Joystick(OperatorConstants.DRIVER_CONTROLLER_PORT);
+      new Joystick(IOConstants.DRIVER_CONTROLLER_PORT);
 
   private final TrajectoryFactory trajectoryFactory = new TrajectoryFactory();
 
@@ -53,10 +53,10 @@ public class RobotContainer {
       driveBase = new DriveBase(new NavXGyro(), frontLeft, frontRight, backRight, backLeft, false);
     } 
     else {
-      SwerveModuleSim frontLeft = new SwerveModuleSim();
-      SwerveModuleSim frontRight = new SwerveModuleSim();
-      SwerveModuleSim backLeft = new SwerveModuleSim();
-      SwerveModuleSim backRight = new SwerveModuleSim();
+      SwerveModuleSim frontLeft = new SwerveModuleSim(FrontLeftModuleConstants.angleOffset);
+      SwerveModuleSim frontRight = new SwerveModuleSim(FrontRightModuleConstants.angleOffset);
+      SwerveModuleSim backLeft = new SwerveModuleSim(BackLeftModuleConstants.angleOffset);
+      SwerveModuleSim backRight = new SwerveModuleSim(BackRightModuleConstants.angleOffset);
 
       driveBase = new DriveBase(new GyroIO(){}, frontLeft, frontRight, backLeft, backRight, false);
     }
@@ -67,9 +67,9 @@ public class RobotContainer {
   private void setTeleopDefaultCommands() {
     driveBase.setDefaultCommand(
       new SwerveDriveCommand(driveBase,
-          () -> -0.1 * driverJoystick.getRawAxis(OperatorConstants.STRAFE_X_AXIS),
-          () -> -0.1 * driverJoystick.getRawAxis(OperatorConstants.STRAFE_Y_AXIS),
-          () -> -driverJoystick.getRawAxis(OperatorConstants.ROTATION_AXIS),
+          () -> -0.1 * driverJoystick.getRawAxis(IOConstants.STRAFE_X_AXIS),
+          () -> -0.1 * driverJoystick.getRawAxis(IOConstants.STRAFE_Y_AXIS),
+          () -> -driverJoystick.getRawAxis(IOConstants.ROTATION_AXIS),
           DriveConstants.FIELD_CENTRIC));
   }
 

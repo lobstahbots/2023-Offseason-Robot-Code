@@ -5,6 +5,7 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.wpilibj.simulation.FlywheelSim;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -20,7 +21,11 @@ public class SwerveModuleSim implements SwerveModuleIO {
   private double driveAppliedVolts = 0.0;
   private double turnAppliedVolts = 0.0;
 
-  public SwerveModuleSim() {}
+  private Rotation2d angularOffset;
+
+  public SwerveModuleSim(double angularOffsetDegrees) {
+    this.angularOffset = Rotation2d.fromDegrees(angularOffsetDegrees);
+  }
 
   public void updateInputs(ModuleIOInputs inputs) {
     simDriveMotor.update(SimConstants.LOOP_TIME);
@@ -28,20 +33,12 @@ public class SwerveModuleSim implements SwerveModuleIO {
 
     double angleDelta = simAngleMotor.getAngularVelocityRadPerSec() * 0.020;
 
-    SmartDashboard.putNumber("Angle delta", angleDelta);
-    SmartDashboard.putNumber("drive position rad", inputs.drivePositionRad);
-
-    inputs.turnPositionRad += angleDelta;
-
-    inputs.turnPositionRad = LobstahMath.wrapValue(inputs.turnPositionRad, 0, 2 * Math.PI);
-
-    inputs.drivePositionRad = inputs.drivePositionRad + (simDriveMotor.getAngularVelocityRadPerSec() * SimConstants.LOOP_TIME);
+    inputs.turnPosition = Rotation2d.fromRadians(inputs.turnPosition.getRadians() + angleDelta + angularOffset.getRadians());
+    inputs.turnPosition = Rotation2d.fromRadians(LobstahMath.wrapValue(inputs.turnPosition.getRadians(), 0, 2 * Math.PI));
+    inputs.drivePosition = Rotation2d.fromRadians(inputs.drivePosition.getRadians() + simDriveMotor.getAngularVelocityRadPerSec() * SimConstants.LOOP_TIME);
     inputs.driveVelocityRadPerSec = simDriveMotor.getAngularVelocityRadPerSec();
     inputs.driveAppliedVolts = driveAppliedVolts;
     inputs.driveCurrentAmps = new double[] { Math.abs(simDriveMotor.getCurrentDrawAmps()) };
-
-    SmartDashboard.putNumber("angle", simAngleMotor.getAngularVelocityRadPerSec());
-
     inputs.turnVelocityRadPerSec = simAngleMotor.getAngularVelocityRadPerSec();
     inputs.turnAppliedVolts = turnAppliedVolts;
     inputs.turnCurrentAmps = new double[] { Math.abs(simAngleMotor.getCurrentDrawAmps()) };
