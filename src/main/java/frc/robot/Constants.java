@@ -96,7 +96,7 @@ public final class Constants {
 
     public static final double DRIVING_ENCODER_POSITION_CONVERSION_FACTOR = (RobotConstants.WHEEL_DIAMETER * Math.PI) / (RobotConstants.DRIVE_GEAR_RATIO);
     public static final double DRIVING_ENCODER_VELOCITY_CONVERSION_FACTOR = DRIVING_ENCODER_POSITION_CONVERSION_FACTOR / 60.0;
-    public static final double TURNING_ENCODER_POSITION_CONVERSION_FACTOR = (2 * Math.PI) / RobotConstants.ANGLE_GEAR_RATIO;
+    public static final double TURNING_ENCODER_POSITION_CONVERSION_FACTOR = (2 * Math.PI) / (RobotConstants.ANGLE_GEAR_RATIO * 4096);
     public static final double TURNING_ENCODER_VELOCITY_CONVERSION_FACTOR = TURNING_ENCODER_POSITION_CONVERSION_FACTOR / 60.0;
 
     public static final double TURN_PID_MIN_INPUT = 0;
