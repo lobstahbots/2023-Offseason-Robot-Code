@@ -76,14 +76,14 @@ public final class Constants {
       public static final int driveID = 14;
       public static final int angleID = 15;
       public static final double angleOffset = 0;
-      public static final boolean inverted = false;
+      public static final boolean inverted = true;
     }
     public static class BackRightModuleConstants {
       public static final int moduleID = 3;
       public static final int driveID = 10;
       public static final int angleID = 11;
       public static final double angleOffset = 90;
-      public static final boolean inverted = false;
+      public static final boolean inverted = true;
     }
   }
 
@@ -111,7 +111,7 @@ public final class Constants {
 
     public static final double TURN_PID_MIN_OUTPUT = -1;
     public static final double TURN_PID_MAX_OUTPUT = 1;
-    public static final double TURN_PID_P = 0.4;
+    public static final double TURN_PID_P = 1;
     public static final double TURN_PID_I = 0;
     public static final double TURN_PID_D = 0;
     public static final double TURN_PID_FF = 0;
