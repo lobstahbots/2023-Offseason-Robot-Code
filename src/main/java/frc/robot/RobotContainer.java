@@ -93,13 +93,13 @@ public class RobotContainer {
   }
 
   public void configureButtonBindings() {
-    Trigger mainButtonTrigger = operatorJoystick.button(OperatorConstants.SHOOTER_MAIN_BUTTON_ID);
-    Trigger auxiliaryButtonTrigger = operatorJoystick.button(OperatorConstants.SHOOTER_AUXILIARY_BUTTON_ID);
-    mainButtonTrigger.and(auxiliaryButtonTrigger).whileTrue(
+    Trigger mainWheelTrigger = operatorJoystick.button(OperatorConstants.SHOOTER_MAIN_BUTTON_ID);
+    Trigger auxiliaryWheelTrigger = operatorJoystick.button(OperatorConstants.SHOOTER_AUXILIARY_BUTTON_ID);
+    mainWheelTrigger.and(auxiliaryWheelTrigger).whileTrue(
       new SpinShooterCommand(shooter, ShooterConstants.MAIN_MOTOR_SPEED, ShooterConstants.AUXILIARY_MOTOR_SPEED));
-    mainButtonTrigger.and(auxiliaryButtonTrigger.negate()).whileTrue(
+    mainWheelTrigger.and(auxiliaryWheelTrigger.negate()).whileTrue(
       new SpinShooterCommand(shooter, ShooterConstants.MAIN_MOTOR_SPEED, 0));
-    mainButtonTrigger.negate().and(auxiliaryButtonTrigger).whileTrue(
+    mainWheelTrigger.negate().and(auxiliaryWheelTrigger).whileTrue(
       new SpinShooterCommand(shooter, 0, ShooterConstants.AUXILIARY_MOTOR_SPEED));
   }
 
