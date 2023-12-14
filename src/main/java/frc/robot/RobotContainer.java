@@ -6,12 +6,14 @@ package frc.robot;
 
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.IOConstants;
+import frc.robot.Constants.OperatorConstants;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.Constants.PathConstants;
 import frc.robot.Constants.DriveConstants.BackLeftModuleConstants;
 import frc.robot.Constants.DriveConstants.BackRightModuleConstants;
 import frc.robot.Constants.DriveConstants.FrontLeftModuleConstants;
 import frc.robot.Constants.DriveConstants.FrontRightModuleConstants;
+import frc.robot.commands.SpinShooterCommand;
 import frc.robot.commands.SwerveDriveCommand;
 import frc.robot.subsystems.DriveBase;
 import frc.robot.subsystems.GyroIO;
@@ -23,6 +25,8 @@ import com.revrobotics.CANSparkMax.IdleMode;
 
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -34,11 +38,13 @@ public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   private final DriveBase driveBase;
 
-  // private final Shooter shooter = new Shooter(ShooterConstants.MAIN_MOTOR_ID, ShooterConstants.AUXILIARY_MOTOR_ID);
+  private final Shooter shooter = new Shooter(ShooterConstants.MAIN_MOTOR_ID, ShooterConstants.AUXILIARY_MOTOR_ID);
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
   private final Joystick driverJoystick =
       new Joystick(IOConstants.DRIVER_CONTROLLER_PORT);
+  
+  private final CommandJoystick operatorJoystick = new CommandJoystick(IOConstants.OPERATOR_CONTROLLER_PORT);
 
   private final TrajectoryFactory trajectoryFactory = new TrajectoryFactory();
 
@@ -84,6 +90,17 @@ public class RobotContainer {
 
   public void setAutonDefaultCommands() {
     driveBase.setBrakingMode(IdleMode.kBrake);
+  }
+
+  public void configureButtonBindings() {
+    Trigger mainButtonTrigger = operatorJoystick.button(OperatorConstants.SHOOTER_MAIN_BUTTON_ID);
+    Trigger auxiliaryButtonTrigger = operatorJoystick.button(OperatorConstants.SHOOTER_AUXILIARY_BUTTON_ID);
+    mainButtonTrigger.and(auxiliaryButtonTrigger).whileTrue(
+      new SpinShooterCommand(shooter, ShooterConstants.MAIN_MOTOR_SPEED, ShooterConstants.AUXILIARY_MOTOR_SPEED));
+    mainButtonTrigger.and(auxiliaryButtonTrigger.negate()).whileTrue(
+      new SpinShooterCommand(shooter, ShooterConstants.MAIN_MOTOR_SPEED, 0));
+    mainButtonTrigger.negate().and(auxiliaryButtonTrigger).whileTrue(
+      new SpinShooterCommand(shooter, 0, ShooterConstants.AUXILIARY_MOTOR_SPEED));
   }
 
 }
