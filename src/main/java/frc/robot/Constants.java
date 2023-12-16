@@ -62,15 +62,15 @@ public final class Constants {
       public static final int moduleID = 0;
       public static final int driveID = 12;
       public static final int angleID = 13;
-      public static final double angleOffset = -90;
-      public static final boolean inverted = false;
+      public static final double angleOffset = 0;
+      public static final boolean inverted = true;
     }
     public static class BackLeftModuleConstants {
       public static final int moduleID = 1;
       public static final int driveID = 16;
       public static final int angleID = 17;
-      public static final double angleOffset = 180;
-      public static final boolean inverted = false;
+      public static final double angleOffset = 0;
+      public static final boolean inverted = true;
     }
     public static class FrontRightModuleConstants {
       public static final int moduleID = 2;
@@ -83,14 +83,14 @@ public final class Constants {
       public static final int moduleID = 3;
       public static final int driveID = 10;
       public static final int angleID = 11;
-      public static final double angleOffset = 90;
+      public static final double angleOffset = 0;
       public static final boolean inverted = true;
     }
   }
 
   public static class OperatorConstants {
-    public static final int SHOOTER_MAIN_BUTTON_ID = 0; // Note: replace with real value
-    public static final int SHOOTER_AUXILIARY_BUTTON_ID = 0; // Same as above
+    public static final int SHOOTER_MAIN_BUTTON_ID = 1; // Note: replace with real value
+    public static final int SHOOTER_AUXILIARY_BUTTON_ID = 3; // Same as above
   }
 
   public static class SwerveConstants {
@@ -102,14 +102,14 @@ public final class Constants {
 
     public static final double DRIVING_ENCODER_POSITION_CONVERSION_FACTOR = (RobotConstants.WHEEL_DIAMETER * Math.PI) / (RobotConstants.DRIVE_GEAR_RATIO);
     public static final double DRIVING_ENCODER_VELOCITY_CONVERSION_FACTOR = DRIVING_ENCODER_POSITION_CONVERSION_FACTOR / 60.0;
-    public static final double TURNING_ENCODER_POSITION_CONVERSION_FACTOR = (2 * Math.PI) / (RobotConstants.ANGLE_GEAR_RATIO * 4096);
+    public static final double TURNING_ENCODER_POSITION_CONVERSION_FACTOR = (2 * Math.PI);
     public static final double TURNING_ENCODER_VELOCITY_CONVERSION_FACTOR = TURNING_ENCODER_POSITION_CONVERSION_FACTOR / 60.0;
 
     public static final double TURN_PID_MIN_INPUT = 0;
-    public static final double TURN_PID_MAX_INPUT = TURNING_ENCODER_POSITION_CONVERSION_FACTOR;
+    public static final double TURN_PID_MAX_INPUT = 2*Math.PI;
 
-    public static final double DRIVE_PID_MIN_OUTPUT = -1;
-    public static final double DRIVE_PID_MAX_OUTPUT = 1;
+    public static final double DRIVE_PID_MIN_OUTPUT = -0.4;
+    public static final double DRIVE_PID_MAX_OUTPUT = 0.4;
     public static final double DRIVE_PID_P = 0.04;
     public static final double DRIVE_PID_I = 0;
     public static final double DRIVE_PID_D = 0;

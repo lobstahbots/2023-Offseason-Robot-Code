@@ -44,7 +44,7 @@ public class Robot extends LoggedRobot {
     Logger.recordMetadata("GitBranch", BuildConstants.GIT_BRANCH);
     Logger.recordMetadata("Lobstah Bots", "2023 Swerve Offseason");
     if (Robot.isReal()) {
-      Logger.addDataReceiver(new WPILOGWriter("/U")); // Log to a USB stick
+      // Logger.addDataReceiver(new WPILOGWriter("/U")); // Log to a USB stick
       // File log = new File (Filesystem.getOperatingDirectory(), "log");
       // String logPath = log.getAbsolutePath();
       // System.out.println(logPath);

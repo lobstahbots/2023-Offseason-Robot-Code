@@ -73,9 +73,6 @@ public class SwerveModule {
 
     SwerveModuleState optimizedDesiredState = SwerveModuleState.optimize(desiredState,
       inputs.turnPosition);
-
-    System.out.println("turn" + inputs.turnPosition.getDegrees());
-
       // io.setDriveSpeed(optimizedDesiredState, isOpenLoop);
       // io.setAngle(optimizedDesiredState);
       io.setTurnVoltage(
@@ -106,7 +103,7 @@ public class SwerveModule {
 
   /** Returns the current drive position of the module in meters. */
   public double getPositionMeters() {
-    System.out.println("pos" + inputs.drivePosition.getRadians());
+    SmartDashboard.putNumber("pos" + moduleID, inputs.drivePosition.getRadians());
     return inputs.drivePosition.getRadians() * RobotConstants.WHEEL_DIAMETER / 2;
   }
 

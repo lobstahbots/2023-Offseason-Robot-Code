@@ -51,7 +51,7 @@ public class SwerveDriveCommand extends Command {
           double omega = MathUtil.applyDeadband(rotationSupplier.getAsDouble(), IOConstants.JOYSTICK_DEADBAND);
 
           // Square values
-          linearMagnitude = linearMagnitude * linearMagnitude;
+          // linearMagnitude = linearMagnitude * linearMagnitude;
           omega = Math.copySign(omega * omega, omega);
 
           // Calcaulate new linear velocity

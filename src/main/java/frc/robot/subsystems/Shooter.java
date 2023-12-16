@@ -5,15 +5,18 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.TalonSRXControlMode;
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
+import edu.wpi.first.wpilibj.motorcontrol.Talon;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ShooterConstants;
 
 public class Shooter extends SubsystemBase {
   /** Creates a new Shooter. */
-  private final WPI_TalonSRX auxiliaryMotor;
-  private final WPI_TalonSRX mainMotor;
+  private final TalonSRX auxiliaryMotor;
+  private final TalonSRX mainMotor;
 
   /**
    * Constructs a Shooter with main and auxiliary motors controlled by
@@ -23,8 +26,8 @@ public class Shooter extends SubsystemBase {
    * @param auxiliaryMotorID The ID of the auxiliary motor controller.
    */
   public Shooter(int mainMotorID, int auxiliaryMotorID) {
-    this.auxiliaryMotor = new WPI_TalonSRX(auxiliaryMotorID);
-    this.mainMotor = new WPI_TalonSRX(mainMotorID);
+    this.auxiliaryMotor = new TalonSRX(auxiliaryMotorID);
+    this.mainMotor = new TalonSRX(mainMotorID);
     this.auxiliaryMotor.setNeutralMode(NeutralMode.Brake);
     this.mainMotor.setNeutralMode(NeutralMode.Brake);
     this.auxiliaryMotor.configContinuousCurrentLimit(ShooterConstants.CURRENT_LIMIT);
@@ -37,7 +40,7 @@ public class Shooter extends SubsystemBase {
    * @param auxiliarySpeed The speed at which to drive the motor; in [-1, 1].
    */
   public void auxiliaryDrive(double auxiliarySpeed) {
-    auxiliaryMotor.set(auxiliarySpeed);
+    auxiliaryMotor.set(TalonSRXControlMode.Velocity, auxiliarySpeed);
   }
 
   /**
@@ -46,20 +49,20 @@ public class Shooter extends SubsystemBase {
    * @param mainSpeed The speed at which to drive the motor; in [-1, 1].
    */
   public void mainDrive(double mainSpeed) {
-    mainMotor.set(mainSpeed);
+    mainMotor.set(TalonSRXControlMode.Velocity, mainSpeed);
   }
 
   /**
    * Stops the main motor.
    */
   public void stopMain() {
-    mainMotor.stopMotor();
+    mainMotor.set(TalonSRXControlMode.Disabled, 0);
   }
 
   /**
    * Stops the auxiliary motor.
    */
   public void stopAuxiliary() {
-    auxiliaryMotor.stopMotor();
+    auxiliaryMotor.set(TalonSRXControlMode.Disabled, 0);
   }
 }

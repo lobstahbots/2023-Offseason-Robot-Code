@@ -38,7 +38,7 @@ public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   private final DriveBase driveBase;
 
-  private final Shooter shooter = new Shooter(ShooterConstants.MAIN_MOTOR_ID, ShooterConstants.AUXILIARY_MOTOR_ID);
+  // private final Shooter shooter = new Shooter(ShooterConstants.MAIN_MOTOR_ID, ShooterConstants.AUXILIARY_MOTOR_ID);
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
   private final Joystick driverJoystick =
@@ -73,9 +73,9 @@ public class RobotContainer {
   private void setTeleopDefaultCommands() {
     driveBase.setDefaultCommand(
       new SwerveDriveCommand(driveBase,
-          () -> -driverJoystick.getRawAxis(IOConstants.STRAFE_X_AXIS),
-          () -> -driverJoystick.getRawAxis(IOConstants.STRAFE_Y_AXIS),
-          () -> -driverJoystick.getRawAxis(IOConstants.ROTATION_AXIS),
+          () -> driverJoystick.getRawAxis(IOConstants.STRAFE_Y_AXIS),
+          () -> driverJoystick.getRawAxis(IOConstants.STRAFE_X_AXIS),
+          () -> driverJoystick.getRawAxis(IOConstants.ROTATION_AXIS),
           DriveConstants.FIELD_CENTRIC));
   }
 
@@ -93,14 +93,14 @@ public class RobotContainer {
   }
 
   public void configureButtonBindings() {
-    Trigger mainWheelTrigger = operatorJoystick.button(OperatorConstants.SHOOTER_MAIN_BUTTON_ID);
-    Trigger auxiliaryWheelTrigger = operatorJoystick.button(OperatorConstants.SHOOTER_AUXILIARY_BUTTON_ID);
-    mainWheelTrigger.and(auxiliaryWheelTrigger).whileTrue(
-      new SpinShooterCommand(shooter, ShooterConstants.MAIN_MOTOR_SPEED, ShooterConstants.AUXILIARY_MOTOR_SPEED));
-    mainWheelTrigger.and(auxiliaryWheelTrigger.negate()).whileTrue(
-      new SpinShooterCommand(shooter, ShooterConstants.MAIN_MOTOR_SPEED, 0));
-    mainWheelTrigger.negate().and(auxiliaryWheelTrigger).whileTrue(
-      new SpinShooterCommand(shooter, 0, ShooterConstants.AUXILIARY_MOTOR_SPEED));
+    // Trigger mainWheelTrigger = operatorJoystick.button(OperatorConstants.SHOOTER_MAIN_BUTTON_ID);
+    // Trigger auxiliaryWheelTrigger = operatorJoystick.button(OperatorConstants.SHOOTER_AUXILIARY_BUTTON_ID);
+    // mainWheelTrigger.and(auxiliaryWheelTrigger).whileTrue(
+    //   new SpinShooterCommand(shooter, ShooterConstants.MAIN_MOTOR_SPEED, ShooterConstants.AUXILIARY_MOTOR_SPEED));
+    // mainWheelTrigger.and(auxiliaryWheelTrigger.negate()).whileTrue(
+    //   new SpinShooterCommand(shooter, ShooterConstants.MAIN_MOTOR_SPEED, 0));
+    // mainWheelTrigger.negate().and(auxiliaryWheelTrigger).whileTrue(
+    //   new SpinShooterCommand(shooter, 0, ShooterConstants.AUXILIARY_MOTOR_SPEED));
   }
 
 }
