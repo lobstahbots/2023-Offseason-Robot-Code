@@ -25,6 +25,7 @@ public final class Constants {
   }
   public static class IOConstants {
     public static final int DRIVER_CONTROLLER_PORT = 0;
+    public static final int OPERATOR_CONTROLLER_PORT = 0; // Note: add real value
     public static final int STRAFE_X_AXIS = 0;
     public static final int STRAFE_Y_AXIS = 1;
     public static final int ROTATION_AXIS = 2;
@@ -87,6 +88,11 @@ public final class Constants {
     }
   }
 
+  public static class OperatorConstants {
+    public static final int SHOOTER_MAIN_BUTTON_ID = 0; // Note: replace with real value
+    public static final int SHOOTER_AUXILIARY_BUTTON_ID = 0; // Same as above
+  }
+
   public static class SwerveConstants {
     public static final boolean invertGyro = true;
 
@@ -125,5 +131,7 @@ public final class Constants {
     public static final int AUXILIARY_MOTOR_ID = 0; // NOTE: Replace with real value
     public static final int MAIN_MOTOR_ID = 0; // See above
     public static final int CURRENT_LIMIT = 40; // Max current
+    public static final double MAIN_MOTOR_SPEED = 0; // Replace with real value
+    public static final double AUXILIARY_MOTOR_SPEED = 0; // See above
   }
 }
