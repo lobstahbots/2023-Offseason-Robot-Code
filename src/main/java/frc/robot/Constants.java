@@ -122,8 +122,8 @@ public final class Constants {
   }
 
   public static class ShooterConstants {
-    public static final int AUXILIARY_MOTOR_ID = 0; // NOTE: Replace with real value
-    public static final int MAIN_MOTOR_ID = 0; // See above
+    public static final int AUXILIARY_MOTOR_ID = 1; // NOTE: Replace with real value
+    public static final int MAIN_MOTOR_ID = 50; // See above
     public static final int CURRENT_LIMIT = 40; // Max current
   }
 }
