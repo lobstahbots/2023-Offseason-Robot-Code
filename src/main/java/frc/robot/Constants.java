@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import com.pathplanner.lib.path.PathConstraints;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -22,6 +24,9 @@ public final class Constants {
   public static class PathConstants {
     public static final Pose2d TARGET_POSE = new Pose2d(16, 7, Rotation2d.fromDegrees(180));
     public static final Pose2d INITIAL_POSE = new Pose2d(0, 0, Rotation2d.fromDegrees(0));
+    public static final PathConstraints CONSTRAINTS = new PathConstraints(
+            3.0, 4.0, 
+            Units.degreesToRadians(540), Units.degreesToRadians(720));
   }
   public static class IOConstants {
     public static final int DRIVER_CONTROLLER_PORT = 0;

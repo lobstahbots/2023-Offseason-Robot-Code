@@ -85,7 +85,7 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return trajectoryFactory.getPathFindToPoseCommand(PathConstants.TARGET_POSE);
+    return trajectoryFactory.getPathFindToPathCommand("autos/NewPath");
   }
 
   public void setAutonDefaultCommands() {
