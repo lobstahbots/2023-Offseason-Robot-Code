@@ -13,6 +13,7 @@ import frc.robot.Constants.DriveConstants.BackLeftModuleConstants;
 import frc.robot.Constants.DriveConstants.BackRightModuleConstants;
 import frc.robot.Constants.DriveConstants.FrontLeftModuleConstants;
 import frc.robot.Constants.DriveConstants.FrontRightModuleConstants;
+import frc.robot.TrajectoryFactory.PathType;
 import frc.robot.commands.SpinShooterCommand;
 import frc.robot.commands.SwerveDriveCommand;
 import frc.robot.subsystems.DriveBase;
@@ -85,7 +86,7 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return trajectoryFactory.getPathFindToPathCommand("autos/NewPath");
+    return trajectoryFactory.getPathFindToPathCommand("NewPath", PathType.CHOREO);
   }
 
   public void setAutonDefaultCommands() {
