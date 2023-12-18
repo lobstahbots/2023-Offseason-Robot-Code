@@ -13,6 +13,14 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.PathConstants;
 
 public class TrajectoryFactory {
+    /**
+     * Determines type of an inputted trajectory - constructed using Choreo, or using PathPlanner. Default should be Choreo.
+     */
+    public enum PathType {
+        CHOREO,
+        PATHPLANNER
+    }
+
     /**Constructs a path following command to generate a path to a target position.
      * 
      * @param targetPose The desired end pose of the generated path.
@@ -34,11 +42,20 @@ public class TrajectoryFactory {
     /**Constructs a path following command to a preset path from the Pathplanner directory.
      * 
      * @param pathname A String containing the name of the file with the path JSON.
+     * @param pathType A {@link PathType} determining the format of the inputted trajectory. Files ending in .path should be imported as PATHPLANNER, while files ending in .traj should be imported as CHOREO.
      * @return The constructed path following command
      */
-    public Command getPathFindToPathCommand(String pathname) {
-        PathPlannerPath path = PathPlannerPath.fromPathFile(pathname);
-
+    public Command getPathFindToPathCommand(String pathname, PathType pathType) {
+        PathPlannerPath path;
+        switch(pathType) {
+            case CHOREO: 
+                path = PathPlannerPath.fromChoreoTrajectory(pathname);
+            case PATHPLANNER:
+                path = PathPlannerPath.fromPathFile(pathname);
+            default:
+                path = PathPlannerPath.fromChoreoTrajectory(pathname);
+        }
+        
         // Since AutoBuilder is configured, we can use it to build pathfinding commands
         Command pathfindingCommand = AutoBuilder.pathfindThenFollowPath(
             path,
