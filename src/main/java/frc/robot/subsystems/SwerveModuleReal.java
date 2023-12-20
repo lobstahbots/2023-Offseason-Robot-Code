@@ -20,6 +20,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.RobotConstants;
@@ -106,8 +107,11 @@ public class SwerveModuleReal implements SwerveModuleIO {
     angleEncoder.setPositionConversionFactor(SwerveConstants.TURNING_ENCODER_POSITION_CONVERSION_FACTOR);
     angleEncoder.setVelocityConversionFactor(SwerveConstants.TURNING_ENCODER_VELOCITY_CONVERSION_FACTOR);
 
+    Timer.delay(0.5);
     driveMotor.burnFlash();
     angleMotor.burnFlash();
+    Timer.delay(0.5);
+
 
     System.out.println(moduleID + angleAbsoluteEncoder.getPosition());
     this.angularOffset = Rotation2d.fromRadians(angularOffsetRadians);
