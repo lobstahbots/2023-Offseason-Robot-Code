@@ -39,9 +39,9 @@ public class TrajectoryFactory {
         return pathfindingCommand;
     }
 
-    /**Constructs a path following command to a preset path from the Pathplanner directory.
+    /**Constructs a path following command to a preset path from the deploy directory Path can be PathPlanner or Choreo-constructed.
      * 
-     * @param pathname A String containing the name of the file with the path JSON.
+     * @param pathname A String containing the name of the file with the path (leave out the .traj or .path ending).
      * @param pathType A {@link PathType} determining the format of the inputted trajectory. Files ending in .path should be imported as PATHPLANNER, while files ending in .traj should be imported as CHOREO.
      * @return The constructed path following command
      */
@@ -73,7 +73,6 @@ public class TrajectoryFactory {
      * @return The constructed path following command through provided poses, with set end rotation.
      */
     public Command getPathFromWaypoints(Rotation2d goalEndRotationHolonomic, Pose2d...poses) {
-        // Create a 
         List<Translation2d> bezierPoints = PathPlannerPath.bezierFromPoses(poses);
 
         // Create the path using the bezier points created above
