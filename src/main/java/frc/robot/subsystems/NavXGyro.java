@@ -13,7 +13,9 @@ import frc.robot.Constants.SwerveConstants;
 public class NavXGyro implements GyroIO {
     private final AHRS gyro = new AHRS();
 
-    public NavXGyro(){}
+    public NavXGyro(){
+        gyro.zeroYaw();
+    }
 
     public Rotation2d getYaw() {
         return (SwerveConstants.invertGyro)
@@ -47,9 +49,9 @@ public class NavXGyro implements GyroIO {
 
     public void updateInputs(GyroIOInputs inputs) {
         inputs.connected = gyro.isConnected();
-        inputs.rollPositionRad = getRoll().getRadians();
-        inputs.pitchPositionRad = getPitch().getRadians();
-        inputs.yawPositionRad = getYaw().getRadians();
+        inputs.rollPosition = getRoll();
+        inputs.pitchPosition = getPitch();
+        inputs.yawPosition = getYaw();
         inputs.rollVelocity = getRollVelocity();
         inputs.pitchVelocity = getPitchVelocity();
         inputs.yawVelocity = getYawVelocity();

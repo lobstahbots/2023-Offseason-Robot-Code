@@ -33,8 +33,7 @@ public class DriveBase extends SubsystemBase {
   private final SwerveModule[] modules; 
 
   private SwerveDrivePoseEstimator swerveOdometry;
-  private final NavXGyro gyro = new NavXGyro();
-  private final GyroIO gyroIO;
+  private final GyroIO gyro;
   private final GyroIOInputsAutoLogged gyroInputs = new GyroIOInputsAutoLogged();
   private boolean isOpenLoop;
   private Rotation2d simRotation = new Rotation2d();
@@ -53,10 +52,11 @@ public class DriveBase extends SubsystemBase {
 
     this.modules = new SwerveModule[]{new SwerveModule(frontLeft, 0), new SwerveModule(frontRight, 1), new SwerveModule(backLeft, 2), new SwerveModule(backRight, 3)};
     
-    this.gyroIO = gyroIO;
+    this.gyro = gyroIO;
 
     gyro.zeroGyro();
-    swerveOdometry = new SwerveDrivePoseEstimator(DriveConstants.KINEMATICS, gyro.getYaw(), getPositions(), new Pose2d());
+    
+    swerveOdometry = new SwerveDrivePoseEstimator(DriveConstants.KINEMATICS, gyroInputs.yawPosition, getPositions(), new Pose2d());
 
     field = new Field2d();
     SmartDashboard.putData("Field", field);
@@ -84,7 +84,7 @@ public class DriveBase extends SubsystemBase {
    * @param pose The desired pose to reset the odometry to.
    */
   public void resetPose(Pose2d pose) {
-    swerveOdometry.resetPosition(gyro.getYaw(), getPositions(), pose);
+    swerveOdometry.resetPosition(gyroInputs.yawPosition, getPositions(), pose);
   }
   
   /**Gets pose from odometry.
@@ -124,7 +124,7 @@ public class DriveBase extends SubsystemBase {
    * @return The robot-relative {@link ChassisSpeeds}.
    */
   public ChassisSpeeds getRobotRelativeSpeeds() {
-  return ChassisSpeeds.fromFieldRelativeSpeeds(DriveConstants.KINEMATICS.toChassisSpeeds(getStates()), gyro.getYaw());
+  return ChassisSpeeds.fromFieldRelativeSpeeds(DriveConstants.KINEMATICS.toChassisSpeeds(getStates()), gyroInputs.yawPosition);
  } 
 
 /**
@@ -224,7 +224,7 @@ public void setIsOpenLoop(boolean newValue) {
  * @return The angle of the gyro as a {@link} Rotation2d.
  */
 public Rotation2d getGyroAngle() {
-  return gyro.getYaw();
+  return gyroInputs.yawPosition;
 }
 
   @Override
@@ -235,12 +235,12 @@ public Rotation2d getGyroAngle() {
       SmartDashboard.putNumber("Twist Theta", twist.dtheta);
       swerveOdometry.update(simRotation, getPositions());
     } else {
-      swerveOdometry.update(gyro.getYaw(), getPositions());
+      swerveOdometry.update(gyroInputs.yawPosition, getPositions());
     }
     field.setRobotPose(getPose());
     SmartDashboard.putString("Pose", getPose().toString());
     Logger.recordOutput("Odometry", getPose());
-     gyroIO.updateInputs(gyroInputs);
+     gyro.updateInputs(gyroInputs);
     Logger.processInputs("Drive/Gyro", gyroInputs);
     for (var module : modules) {
       module.periodic();
@@ -267,16 +267,16 @@ public Rotation2d getGyroAngle() {
                 new Twist3d(
                     0.0,
                     0.0,
-                    Math.abs(gyroInputs.pitchPositionRad) * RobotConstants.TRACK_WIDTH / 2.0,
+                    Math.abs(gyroInputs.pitchPosition.getRadians()) * RobotConstants.TRACK_WIDTH / 2.0,
                     0.0,
-                    gyroInputs.pitchPositionRad,
+                    gyroInputs.pitchPosition.getRadians(),
                     0.0))
             .exp(
                 new Twist3d(
                     0.0,
                     0.0,
-                    Math.abs(gyroInputs.rollPositionRad) * RobotConstants.TRACK_WIDTH / 2.0,
-                    gyroInputs.rollPositionRad,
+                    Math.abs(gyroInputs.rollPosition.getRadians()) * RobotConstants.TRACK_WIDTH / 2.0,
+                    gyroInputs.rollPosition.getRadians(),
                     0.0,
                     0.0));
 
