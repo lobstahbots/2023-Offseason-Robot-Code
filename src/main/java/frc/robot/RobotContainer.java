@@ -23,7 +23,6 @@ import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.SwerveModuleReal;
 import frc.robot.subsystems.SwerveModuleSim;
 import com.revrobotics.CANSparkMax.IdleMode;
-
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;

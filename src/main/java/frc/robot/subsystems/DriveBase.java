@@ -15,8 +15,6 @@ import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.geometry.Twist2d;
 import edu.wpi.first.math.geometry.Twist3d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
@@ -29,7 +27,6 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Robot;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.RobotConstants;
-import frc.robot.Constants.SimConstants;
 
 public class DriveBase extends SubsystemBase {
   /** Creates a new SwerveDriveBase. */
@@ -41,8 +38,6 @@ public class DriveBase extends SubsystemBase {
   private final GyroIOInputsAutoLogged gyroInputs = new GyroIOInputsAutoLogged();
   private boolean isOpenLoop;
   private Rotation2d simRotation = new Rotation2d();
-
-  private ChassisSpeeds setpoint = new ChassisSpeeds();
 
   private SwerveModuleState[] setpointStates =
       new SwerveModuleState[] {
@@ -131,27 +126,6 @@ public class DriveBase extends SubsystemBase {
   public ChassisSpeeds getRobotRelativeSpeeds() {
   return ChassisSpeeds.fromFieldRelativeSpeeds(DriveConstants.KINEMATICS.toChassisSpeeds(getStates()), gyro.getYaw());
  } 
-
- /**
-  * Drives the robot according to desired translation vector. 
-  *
-  * @param translation The desired translation vector.
-  * @param rotation The rotation of the robot.
-  * @param fieldRelative Whether or not to drive field relative.
-  */
-  public void swerveDrive(Translation2d translation, double rotation, boolean fieldRelative) {
-    SwerveModuleState[] swerveModuleStates =
-        DriveConstants.KINEMATICS.toSwerveModuleStates(
-            fieldRelative
-                ? ChassisSpeeds.fromFieldRelativeSpeeds(
-                    translation.getX(), translation.getY(), rotation, gyro.getYaw())
-                : new ChassisSpeeds(translation.getX(), translation.getY(), rotation));
-    SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, DriveConstants.MAX_DRIVE_SPEED);
-
-    for (SwerveModule module : modules) {
-      module.setDesiredState(swerveModuleStates[module.getModuleID()], isOpenLoop);
-    }
-}
 
 /**
  * Drives the robot robot-relative according to provided {@link ChassisSpeeds}.
@@ -280,54 +254,9 @@ public Rotation2d getGyroAngle() {
       }
     }
 
-
-    // if (DriverStation.isDisabled()) {
-    //   // Stop moving while disabled
-    //   for (var module : modules) {
-    //     module.stop();
-    //   }
-  
-    // if (DriverStation.isDisabled()) {
-    //   // Stop moving while disabled
-    //   for (var module : modules) {
-    //     module.stop();
-    //   }
-
-     
     else {
-      // Twist2d setpointTwist =
-      //     new Pose2d()
-      //         .log(
-      //             new Pose2d(
-      //                 setpoint.vxMetersPerSecond * SimConstants.LOOP_TIME,
-      //                 setpoint.vyMetersPerSecond * SimConstants.LOOP_TIME,
-      //                 new Rotation2d(setpoint.omegaRadiansPerSecond * SimConstants.LOOP_TIME)));
-
-      // ChassisSpeeds adjustedSpeeds =
-      //     new ChassisSpeeds(
-      //         setpointTwist.dx / SimConstants.LOOP_TIME,
-      //         setpointTwist.dy / SimConstants.LOOP_TIME,
-      //         setpointTwist.dtheta / SimConstants.LOOP_TIME);
-      // SwerveModuleState[] newStates = DriveConstants.KINEMATICS.toSwerveModuleStates(adjustedSpeeds);
-      // SwerveDriveKinematics.desaturateWheelSpeeds(newStates, DriveConstants.MAX_DRIVE_SPEED);
-
-      // // Set to last angles if zero
-      // if (adjustedSpeeds.vxMetersPerSecond == 0.0
-      //     && adjustedSpeeds.vyMetersPerSecond == 0.0
-      //     && adjustedSpeeds.omegaRadiansPerSecond == 0) {
-      //   for (int i = 0; i < 4; i++) {
-      //     newStates[i] = new SwerveModuleState(0.0, states[i].angle);
-      //   }
-      // }
-
-      // for(int j = 0; j < 4; j++) {
-      //   SmartDashboard.putNumber("Desired angle" + j, newStates[j].angle.getDegrees());
-      // }
-      // states = newStates;
-      
-    //Logger.recordOutput("SwerveStates/Desired", setModuleStates(newStates));
-    // setModuleStates(newStates);
-    Logger.recordOutput("SwerveStates/Measured", setpointStates);
+    Logger.recordOutput("SwerveStates/Measured", getStates());
+    Logger.recordOutput("SwerveStates/Desired", setpointStates);
     Logger.recordOutput("Odometry/Robot", getPose());
     
     //Log 3D odometry pose
