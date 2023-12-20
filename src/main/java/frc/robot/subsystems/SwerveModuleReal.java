@@ -109,6 +109,7 @@ public class SwerveModuleReal implements SwerveModuleIO {
 
     Timer.delay(0.5);
     driveMotor.burnFlash();
+    Timer.delay(0.5);
     angleMotor.burnFlash();
     Timer.delay(0.5);
 
