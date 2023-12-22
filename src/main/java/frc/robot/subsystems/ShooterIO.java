@@ -30,4 +30,12 @@ public interface ShooterIO {
 
   /** Stops the auxiliary motor. */
   public default void stopAuxiliary() {}
+
+  public double getMainAppliedVolts();
+
+  public double getMainCurrentAmps();
+
+  public double getAuxiliaryAppliedVolts();
+
+  public double getAuxiliaryCurrentAmps();
 }

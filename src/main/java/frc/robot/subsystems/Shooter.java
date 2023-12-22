@@ -57,6 +57,38 @@ public class Shooter extends SubsystemBase {
     io.stopAuxiliary();
   }
 
+   /**
+   * Get the voltage applied to the main motor.
+   * @return The applied voltage (in volts).
+   */
+  public double getMainAppliedVolts() {
+    return io.getMainAppliedVolts();
+  }
+
+  /**
+   * Get the current output from the main motor controller.
+   * @return The output/stator current (in amps).
+   */
+  public double getMainCurrentAmps() {
+    return io.getMainCurrentAmps();
+  }
+
+  /**
+   * Get the voltage applied to the auxiliary motor.
+   * @return The applied voltage (in volts).
+   */
+  public double getAuxiliaryAppliedVolts() {
+    return io.getAuxiliaryAppliedVolts();
+  }
+
+  /**
+   * Get the current output from the auxiliary motor controller.
+   * @return The output/stator current (in amps).
+   */
+  public double getAuxiliaryCurrentAmps() {
+    return io.getAuxiliaryCurrentAmps();
+  }
+
   public void periodic() {
     io.updateInputs(inputs);
     Logger.processInputs("Shooter", inputs);
