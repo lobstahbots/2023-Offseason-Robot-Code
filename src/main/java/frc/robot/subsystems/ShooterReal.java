@@ -62,38 +62,6 @@ public class ShooterReal implements ShooterIO {
     auxiliaryMotor.set(TalonSRXControlMode.Disabled, 0);
   }
 
-  /**
-   * Get the voltage applied to the main motor.
-   * @return The applied voltage (in volts).
-   */
-  public double getMainAppliedVolts() {
-    return mainMotor.getMotorOutputVoltage();
-  }
-
-  /**
-   * Get the current output from the main motor controller.
-   * @return The output/stator current (in amps).
-   */
-  public double getMainCurrentAmps() {
-    return mainMotor.getStatorCurrent();
-  }
-
-  /**
-   * Get the voltage applied to the auxiliary motor.
-   * @return The applied voltage (in volts).
-   */
-  public double getAuxiliaryAppliedVolts() {
-    return auxiliaryMotor.getMotorOutputVoltage();
-  }
-
-  /**
-   * Get the current output from the auxiliary motor controller.
-   * @return The output/stator current (in amps).
-   */
-  public double getAuxiliaryCurrentAmps() {
-    return auxiliaryMotor.getStatorCurrent();
-  }
-
   public void updateInputs(ShooterIOInputs inputs) {
     inputs.mainAppliedVolts = mainMotor.getMotorOutputVoltage();
     inputs.mainCurrentAmps = mainMotor.getStatorCurrent();

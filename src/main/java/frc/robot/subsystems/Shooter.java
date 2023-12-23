@@ -62,7 +62,7 @@ public class Shooter extends SubsystemBase {
    * @return The applied voltage (in volts).
    */
   public double getMainAppliedVolts() {
-    return io.getMainAppliedVolts();
+    return inputs.mainAppliedVolts;
   }
 
   /**
@@ -70,7 +70,7 @@ public class Shooter extends SubsystemBase {
    * @return The output/stator current (in amps).
    */
   public double getMainCurrentAmps() {
-    return io.getMainCurrentAmps();
+    return inputs.mainCurrentAmps;
   }
 
   /**
@@ -78,7 +78,7 @@ public class Shooter extends SubsystemBase {
    * @return The applied voltage (in volts).
    */
   public double getAuxiliaryAppliedVolts() {
-    return io.getAuxiliaryAppliedVolts();
+    return inputs.auxiliaryAppliedVolts;
   }
 
   /**
@@ -86,7 +86,7 @@ public class Shooter extends SubsystemBase {
    * @return The output/stator current (in amps).
    */
   public double getAuxiliaryCurrentAmps() {
-    return io.getAuxiliaryCurrentAmps();
+    return inputs.auxiliaryCurrentAmps;
   }
 
   public void periodic() {
