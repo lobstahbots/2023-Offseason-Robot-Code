@@ -4,34 +4,25 @@
 
 package frc.robot.subsystems;
 
-import com.ctre.phoenix.motorcontrol.NeutralMode;
-import com.ctre.phoenix.motorcontrol.TalonSRXControlMode;
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
-import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+import org.littletonrobotics.junction.Logger;
 
-import edu.wpi.first.wpilibj.motorcontrol.Talon;
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants.ShooterConstants;
 
 public class Shooter extends SubsystemBase {
   /** Creates a new Shooter. */
-  private final TalonSRX auxiliaryMotor;
-  private final TalonSRX mainMotor;
+  private final ShooterIOInputsAutoLogged inputs = new ShooterIOInputsAutoLogged();
+  private ShooterIO io;
 
   /**
    * Constructs a Shooter with main and auxiliary motors controlled by
-   * {@link WPI_TalonSRX}es.
+   * {@link TalonSRX}es.
    * 
-   * @param mainMotorID      The ID of the main motor controller.
-   * @param auxiliaryMotorID The ID of the auxiliary motor controller.
+   * @param io The {@link ShooterIO} object.
    */
-  public Shooter(int mainMotorID, int auxiliaryMotorID) {
-    this.auxiliaryMotor = new TalonSRX(auxiliaryMotorID);
-    this.mainMotor = new TalonSRX(mainMotorID);
-    this.auxiliaryMotor.setNeutralMode(NeutralMode.Brake);
-    this.mainMotor.setNeutralMode(NeutralMode.Brake);
-    this.auxiliaryMotor.configContinuousCurrentLimit(ShooterConstants.CURRENT_LIMIT);
-    this.mainMotor.configContinuousCurrentLimit(ShooterConstants.CURRENT_LIMIT);
+  public Shooter(ShooterIO io) {
+    this.io = io;
   }
 
   /**
@@ -40,7 +31,7 @@ public class Shooter extends SubsystemBase {
    * @param auxiliarySpeed The speed at which to drive the motor; in [-1, 1].
    */
   public void auxiliaryDrive(double auxiliarySpeed) {
-    auxiliaryMotor.set(TalonSRXControlMode.Velocity, auxiliarySpeed);
+    io.auxiliaryDrive(auxiliarySpeed);
   }
 
   /**
@@ -49,20 +40,57 @@ public class Shooter extends SubsystemBase {
    * @param mainSpeed The speed at which to drive the motor; in [-1, 1].
    */
   public void mainDrive(double mainSpeed) {
-    mainMotor.set(TalonSRXControlMode.Velocity, mainSpeed);
+    io.mainDrive(mainSpeed);
   }
 
   /**
    * Stops the main motor.
    */
   public void stopMain() {
-    mainMotor.set(TalonSRXControlMode.Disabled, 0);
+    io.stopMain();
   }
 
   /**
    * Stops the auxiliary motor.
    */
   public void stopAuxiliary() {
-    auxiliaryMotor.set(TalonSRXControlMode.Disabled, 0);
+    io.stopAuxiliary();
+  }
+
+   /**
+   * Get the voltage applied to the main motor.
+   * @return The applied voltage (in volts).
+   */
+  public double getMainAppliedVolts() {
+    return inputs.mainAppliedVolts;
+  }
+
+  /**
+   * Get the current output from the main motor controller.
+   * @return The output/stator current (in amps).
+   */
+  public double getMainCurrentAmps() {
+    return inputs.mainCurrentAmps;
+  }
+
+  /**
+   * Get the voltage applied to the auxiliary motor.
+   * @return The applied voltage (in volts).
+   */
+  public double getAuxiliaryAppliedVolts() {
+    return inputs.auxiliaryAppliedVolts;
+  }
+
+  /**
+   * Get the current output from the auxiliary motor controller.
+   * @return The output/stator current (in amps).
+   */
+  public double getAuxiliaryCurrentAmps() {
+    return inputs.auxiliaryCurrentAmps;
+  }
+
+  public void periodic() {
+    io.updateInputs(inputs);
+    Logger.processInputs("Shooter", inputs);
   }
 }

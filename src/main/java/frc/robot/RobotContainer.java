@@ -20,6 +20,7 @@ import frc.robot.subsystems.DriveBase;
 import frc.robot.subsystems.GyroIO;
 import frc.robot.subsystems.NavXGyro;
 import frc.robot.subsystems.Shooter;
+import frc.robot.subsystems.ShooterReal;
 import frc.robot.subsystems.SwerveModuleReal;
 import frc.robot.subsystems.SwerveModuleSim;
 import com.revrobotics.CANSparkMax.IdleMode;
@@ -38,7 +39,7 @@ public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   private final DriveBase driveBase;
 
-  // private final Shooter shooter = new Shooter(ShooterConstants.MAIN_MOTOR_ID, ShooterConstants.AUXILIARY_MOTOR_ID);
+  // private final Shooter shooter;
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
   private final Joystick driverJoystick =
@@ -66,6 +67,9 @@ public class RobotContainer {
 
       driveBase = new DriveBase(new GyroIO(){}, frontLeft, frontRight, backLeft, backRight, false);
     }
+
+    // ShooterReal shooterReal = new ShooterReal(ShooterConstants.MAIN_MOTOR_ID, ShooterConstants.AUXILIARY_MOTOR_ID);
+    // shooter = new Shooter(shooterReal);
    
     setTeleopDefaultCommands();
   }
