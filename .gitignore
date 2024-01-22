@@ -41,7 +41,6 @@
 
 # Log file
 *.log
-*.wpilog
 
 # BlueJ files
 *.ctxt
@@ -171,3 +170,9 @@ out/
 
 # Simulation GUI and other tools window save file
 *-window.json
+
+# Simulation data log directory
+logs/
+
+# Folder that has CTRE Phoenix Sim device config storage
+ctre_sim/

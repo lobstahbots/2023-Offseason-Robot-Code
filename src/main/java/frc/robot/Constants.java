@@ -30,7 +30,7 @@ public final class Constants {
   }
   public static class IOConstants {
     public static final int DRIVER_CONTROLLER_PORT = 0;
-    public static final int OPERATOR_CONTROLLER_PORT = 0; // Note: add real value
+    public static final int OPERATOR_CONTROLLER_PORT = 1; // Note: add real value
     public static final int STRAFE_X_AXIS = 0;
     public static final int STRAFE_Y_AXIS = 1;
     public static final int ROTATION_AXIS = 2;
@@ -52,10 +52,10 @@ public final class Constants {
     public static final int DRIVE_MOTOR_CURRENT_LIMIT = 40;
     public static final int ANGLE_MOTOR_CURRENT_LIMIT = 40;
     public static final SwerveDriveKinematics KINEMATICS = new SwerveDriveKinematics(
-      new Translation2d(-RobotConstants.WHEELBASE / 2.0, RobotConstants.TRACK_WIDTH / 2.0),
+      new Translation2d(RobotConstants.WHEELBASE / 2.0, -RobotConstants.TRACK_WIDTH / 2.0),
       new Translation2d(RobotConstants.WHEELBASE / 2.0, RobotConstants.TRACK_WIDTH / 2.0),
-      new Translation2d(-RobotConstants.WHEELBASE / 2.0, -RobotConstants.TRACK_WIDTH / 2.0),
-      new Translation2d(RobotConstants.WHEELBASE / 2.0, -RobotConstants.TRACK_WIDTH / 2.0));
+      new Translation2d(-RobotConstants.WHEELBASE / 2.0, RobotConstants.TRACK_WIDTH / 2.0),
+      new Translation2d(-RobotConstants.WHEELBASE / 2.0, -RobotConstants.TRACK_WIDTH / 2.0));
 
     public static final boolean FIELD_CENTRIC = true;
     public static final boolean IS_OPEN_LOOP = false;
@@ -67,14 +67,14 @@ public final class Constants {
       public static final int moduleID = 0;
       public static final int driveID = 12;
       public static final int angleID = 13;
-      public static final double angleOffset = 0;
+      public static final double angleOffset = -90;
       public static final boolean inverted = true;
     }
     public static class BackLeftModuleConstants {
       public static final int moduleID = 1;
       public static final int driveID = 16;
       public static final int angleID = 17;
-      public static final double angleOffset = 0;
+      public static final double angleOffset = 180;
       public static final boolean inverted = true;
     }
     public static class FrontRightModuleConstants {
@@ -88,7 +88,7 @@ public final class Constants {
       public static final int moduleID = 3;
       public static final int driveID = 10;
       public static final int angleID = 11;
-      public static final double angleOffset = 0;
+      public static final double angleOffset = 90;
       public static final boolean inverted = true;
     }
   }

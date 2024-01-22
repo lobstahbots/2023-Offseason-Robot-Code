@@ -4,16 +4,16 @@
 
 package frc.robot.subsystems;
 
-import com.ctre.phoenix.motorcontrol.NeutralMode;
-import com.ctre.phoenix.motorcontrol.TalonSRXControlMode;
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 
+import edu.wpi.first.wpilibj.motorcontrol.Talon;
 import frc.robot.Constants.ShooterConstants;
 
 public class ShooterReal implements ShooterIO {
   /** Creates a new Shooter. */
-  private final TalonSRX auxiliaryMotor;
-  private final TalonSRX mainMotor;
+  private final TalonFX auxiliaryMotor;
+  private final TalonFX mainMotor;
 
   /**
    * Constructs a Shooter for real cases.
@@ -22,12 +22,10 @@ public class ShooterReal implements ShooterIO {
    * @param auxiliaryMotorID The ID of the auxiliary motor controller.
    */
   public ShooterReal(int mainMotorID, int auxiliaryMotorID) {
-    this.auxiliaryMotor = new TalonSRX(auxiliaryMotorID);
-    this.mainMotor = new TalonSRX(mainMotorID);
-    this.auxiliaryMotor.setNeutralMode(NeutralMode.Brake);
-    this.mainMotor.setNeutralMode(NeutralMode.Brake);
-    this.auxiliaryMotor.configContinuousCurrentLimit(ShooterConstants.CURRENT_LIMIT);
-    this.mainMotor.configContinuousCurrentLimit(ShooterConstants.CURRENT_LIMIT);
+    this.auxiliaryMotor = new TalonFX(auxiliaryMotorID);
+    this.mainMotor = new TalonFX(mainMotorID);
+    this.auxiliaryMotor.setNeutralMode(NeutralModeValue.Brake);
+    this.mainMotor.setNeutralMode(NeutralModeValue.Brake);
   }
 
   /**
@@ -36,7 +34,7 @@ public class ShooterReal implements ShooterIO {
    * @param auxiliarySpeed The speed at which to drive the motor; in [-1, 1].
    */
   public void auxiliaryDrive(double auxiliarySpeed) {
-    auxiliaryMotor.set(TalonSRXControlMode.Velocity, auxiliarySpeed);
+    auxiliaryMotor.set(auxiliarySpeed);
   }
 
   /**
@@ -45,28 +43,28 @@ public class ShooterReal implements ShooterIO {
    * @param mainSpeed The speed at which to drive the motor; in [-1, 1].
    */
   public void mainDrive(double mainSpeed) {
-    mainMotor.set(TalonSRXControlMode.Velocity, mainSpeed);
+    mainMotor.set(mainSpeed);
   }
 
   /**
    * Stops the main motor.
    */
   public void stopMain() {
-    mainMotor.set(TalonSRXControlMode.Disabled, 0);
+    mainMotor.set(0);
   }
 
   /**
    * Stops the auxiliary motor.
    */
   public void stopAuxiliary() {
-    auxiliaryMotor.set(TalonSRXControlMode.Disabled, 0);
+    auxiliaryMotor.set(0);
   }
 
   public void updateInputs(ShooterIOInputs inputs) {
-    inputs.mainAppliedVolts = mainMotor.getMotorOutputVoltage();
-    inputs.mainCurrentAmps = mainMotor.getStatorCurrent();
+    inputs.mainAppliedVolts = mainMotor.getSupplyVoltage().getValueAsDouble();
+    inputs.mainCurrentAmps = mainMotor.getSupplyVoltage().getValueAsDouble();
 
-    inputs.auxiliaryAppliedVolts = auxiliaryMotor.getMotorOutputVoltage();
-    inputs.auxiliaryCurrentAmps = auxiliaryMotor.getStatorCurrent();
+    inputs.auxiliaryAppliedVolts = auxiliaryMotor.getMotorVoltage().getValueAsDouble();
+    inputs.auxiliaryCurrentAmps = auxiliaryMotor.getMotorVoltage().getValueAsDouble();
   }
 }

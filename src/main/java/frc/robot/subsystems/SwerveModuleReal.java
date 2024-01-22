@@ -51,7 +51,7 @@ public class SwerveModuleReal implements SwerveModuleIO {
    * @param driveMotorID The CAN ID of the motor controlling drive speed.
    * @param angularOffsetDegrees The offset angle in degrees.
   */
-  public SwerveModuleReal (int moduleID, int angleMotorID, int driveMotorID, double angularOffsetRadians, boolean inverted) {
+  public SwerveModuleReal (int moduleID, int angleMotorID, int driveMotorID, double angularOffsetDegrees, boolean inverted) {
     this.moduleID = moduleID;
 
     this.angleMotor = new CANSparkMax(angleMotorID, MotorType.kBrushless);
@@ -103,6 +103,8 @@ public class SwerveModuleReal implements SwerveModuleIO {
     angleAbsoluteEncoder.setPositionConversionFactor(SwerveConstants.TURNING_ENCODER_POSITION_CONVERSION_FACTOR);
     angleAbsoluteEncoder.setVelocityConversionFactor(SwerveConstants.TURNING_ENCODER_VELOCITY_CONVERSION_FACTOR);
 
+    // angleAbsoluteEncoder.setZeroOffset(Rotation2d.fromDegrees(angularOffsetDegrees).getDegrees());
+
     angleEncoder.setPosition(LobstahMath.wrapValue(angleAbsoluteEncoder.getPosition(), 0, 2*Math.PI));
     angleEncoder.setPositionConversionFactor(SwerveConstants.TURNING_ENCODER_POSITION_CONVERSION_FACTOR);
     angleEncoder.setVelocityConversionFactor(SwerveConstants.TURNING_ENCODER_VELOCITY_CONVERSION_FACTOR);
@@ -115,7 +117,7 @@ public class SwerveModuleReal implements SwerveModuleIO {
 
 
     System.out.println(moduleID + angleAbsoluteEncoder.getPosition());
-    this.angularOffset = Rotation2d.fromRadians(angularOffsetRadians);
+    this.angularOffset = Rotation2d.fromDegrees(angularOffsetDegrees);
     this.desiredState.angle = new Rotation2d(angleEncoder.getPosition());
     drivingEncoder.setPosition(0);
 
@@ -140,7 +142,7 @@ public class SwerveModuleReal implements SwerveModuleIO {
    */
   public SwerveModuleState getState() {
     System.out.println(angleAbsoluteEncoder.getPosition() + moduleID);
-    return new SwerveModuleState(drivingEncoder.getVelocity(), new Rotation2d(angleEncoder.getPosition() - angularOffset.getRadians()));
+    return new SwerveModuleState(drivingEncoder.getVelocity(), new Rotation2d(angleAbsoluteEncoder.getPosition() + angularOffset.getRadians()));
   }
   
 
@@ -159,7 +161,7 @@ public class SwerveModuleReal implements SwerveModuleIO {
    * @return The current encoder positions position of the module as a {@link SwerveModulePosition}.
    */
   public SwerveModulePosition getPosition() {
-    return new SwerveModulePosition(drivingEncoder.getPosition(), new Rotation2d(angleEncoder.getPosition() - angularOffset.getRadians()));
+    return new SwerveModulePosition(drivingEncoder.getPosition(), new Rotation2d(angleAbsoluteEncoder.getPosition() + angularOffset.getRadians()));
   }
 
   /**
@@ -244,8 +246,8 @@ public class SwerveModuleReal implements SwerveModuleIO {
     inputs.driveAppliedVolts = driveMotor.getAppliedOutput() * driveMotor.getBusVoltage();
     inputs.driveCurrentAmps = new double[] {driveMotor.getOutputCurrent()};
 
-    inputs.turnPosition = Rotation2d.fromRadians(angleAbsoluteEncoder.getPosition());
-    inputs.turnAbsolutePosition = Rotation2d.fromRadians(angleAbsoluteEncoder.getPosition());
+    inputs.turnPosition = Rotation2d.fromRadians(angleAbsoluteEncoder.getPosition() + angularOffset.getRadians());
+    inputs.turnAbsolutePosition = Rotation2d.fromRadians(angleAbsoluteEncoder.getPosition() + angularOffset.getRadians());
     inputs.turnVelocityRadPerSec = Units.rotationsToRadians(angleAbsoluteEncoder.getVelocity() / 60);
     inputs.turnAppliedVolts = angleMotor.getAppliedOutput() * angleMotor.getBusVoltage();
     inputs.turnCurrentAmps = new double[] {angleMotor.getOutputCurrent()};

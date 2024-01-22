@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Robot;
 import frc.robot.Constants.RobotConstants;
 import frc.robot.Constants.SwerveConstants;
+import stl.math.LobstahMath;
 
 public class SwerveModule {
   private final int moduleID;
@@ -61,6 +62,7 @@ public class SwerveModule {
 
   public void periodic() {
     io.updateInputs(inputs);
+    SmartDashboard.putNumber("Module"+moduleID, LobstahMath.wrapValue(inputs.turnAbsolutePosition.getDegrees(), 0, 360));
     Logger.processInputs("Drive/Module" + Integer.toString(moduleID), inputs);
   }
 
