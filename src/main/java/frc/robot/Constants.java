@@ -25,7 +25,7 @@ public final class Constants {
     public static final Pose2d TARGET_POSE = new Pose2d(16, 7, Rotation2d.fromDegrees(180));
     public static final Pose2d INITIAL_POSE = new Pose2d(0, 0, Rotation2d.fromDegrees(0));
     public static final PathConstraints CONSTRAINTS = new PathConstraints(
-            3.0, 4.0, 
+            0.3, 1, 
             Units.degreesToRadians(540), Units.degreesToRadians(720));
   }
   public static class IOConstants {
@@ -105,7 +105,7 @@ public final class Constants {
     public static final double KA = 0.1;
     public static final double KV = 0.1;
 
-    public static final double DRIVING_ENCODER_POSITION_CONVERSION_FACTOR = (RobotConstants.WHEEL_DIAMETER * Math.PI) / (RobotConstants.DRIVE_GEAR_RATIO);
+    public static final double DRIVING_ENCODER_POSITION_CONVERSION_FACTOR = ((RobotConstants.WHEEL_DIAMETER * Math.PI) * (RobotConstants.DRIVE_GEAR_RATIO)) / 42;
     public static final double DRIVING_ENCODER_VELOCITY_CONVERSION_FACTOR = DRIVING_ENCODER_POSITION_CONVERSION_FACTOR / 60.0;
     public static final double TURNING_ENCODER_POSITION_CONVERSION_FACTOR = (2 * Math.PI);
     public static final double TURNING_ENCODER_VELOCITY_CONVERSION_FACTOR = TURNING_ENCODER_POSITION_CONVERSION_FACTOR / 60.0;

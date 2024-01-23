@@ -24,8 +24,16 @@ import frc.robot.subsystems.ShooterReal;
 import frc.robot.subsystems.SwerveModuleReal;
 import frc.robot.subsystems.SwerveModuleSim;
 import com.revrobotics.CANSparkMax.IdleMode;
+
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.units.Distance;
+import edu.wpi.first.units.Measure;
+import edu.wpi.first.units.Units;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
@@ -89,7 +97,7 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return trajectoryFactory.getPathFindToPathCommand("NewPath", PathType.CHOREO);
+    return new SequentialCommandGroup(trajectoryFactory.getPathFindToPathCommand("Path", PathType.PATHPLANNER));
   }
 
   public void setAutonDefaultCommands() {

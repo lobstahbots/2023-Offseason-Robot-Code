@@ -103,6 +103,9 @@ public class SwerveModuleReal implements SwerveModuleIO {
     angleAbsoluteEncoder.setPositionConversionFactor(SwerveConstants.TURNING_ENCODER_POSITION_CONVERSION_FACTOR);
     angleAbsoluteEncoder.setVelocityConversionFactor(SwerveConstants.TURNING_ENCODER_VELOCITY_CONVERSION_FACTOR);
 
+    drivingEncoder.setPositionConversionFactor(SwerveConstants.DRIVING_ENCODER_POSITION_CONVERSION_FACTOR);
+    drivingEncoder.setVelocityConversionFactor(SwerveConstants.DRIVING_ENCODER_VELOCITY_CONVERSION_FACTOR);
+
     // angleAbsoluteEncoder.setZeroOffset(Rotation2d.fromDegrees(angularOffsetDegrees).getDegrees());
 
     angleEncoder.setPosition(LobstahMath.wrapValue(angleAbsoluteEncoder.getPosition(), 0, 2*Math.PI));
