@@ -15,7 +15,6 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.Robot;
 import frc.robot.Constants.RobotConstants;
 import frc.robot.Constants.SwerveConstants;
 import stl.math.LobstahMath;
@@ -43,6 +42,8 @@ public class SwerveModule {
         SwerveConstants.DRIVE_PID_D);
     this.angleController = new PIDController(SwerveConstants.TURN_PID_P, SwerveConstants.TURN_PID_I,
         SwerveConstants.TURN_PID_D);
+
+    angleController.enableContinuousInput(SwerveConstants.TURN_PID_MIN_INPUT, SwerveConstants.TURN_PID_MAX_INPUT);
   }
 
   /**Sets the voltages of both motors to 0 */
@@ -74,9 +75,8 @@ public class SwerveModule {
   public SwerveModuleState setDesiredState(SwerveModuleState desiredState, boolean isOpenLoop) {
 
     SwerveModuleState optimizedDesiredState = SwerveModuleState.optimize(desiredState,
-      inputs.turnPosition);
-      // io.setDriveSpeed(optimizedDesiredState, isOpenLoop);
-      // io.setAngle(optimizedDesiredState);
+      inputs.turnAbsolutePosition);
+
       io.setTurnVoltage(
           angleController.calculate(getAngle().getRadians(), optimizedDesiredState.angle.getRadians()));
 
